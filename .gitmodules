@@ -1,3 +1,6 @@
 [submodule "content/obsidian-notes"]
 	path = content/obsidian-notes
 	url = git@github.com:pink10000/obsidian-notes.git
+[submodule "content/notes"]
+	path = content/notes
+	url = https://github.com/pink10000/notes.git

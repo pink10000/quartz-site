@@ -16,7 +16,7 @@ const config: QuartzConfig = {
       provider: "plausible",
     },
     locale: "en-US",
-    baseUrl: "pink10000.github.io",
+    baseUrl: "pink10000.github.io/obsidian-notes",
     ignorePatterns: ["private", "templates", ".obsidian"],
     defaultDateType: "modified",
     theme: {
@@ -34,8 +34,8 @@ const config: QuartzConfig = {
           gray: "#b8b8b8",
           darkgray: "#4e4e4e",
           dark: "#2b2b2b",
-          secondary: "#284b63",
-          tertiary: "#84a59d",
+          secondary: "#ed74c3",
+          tertiary: "#5a6ded",
           highlight: "rgba(143, 159, 169, 0.15)",
           textHighlight: "#fff23688",
         },
@@ -45,8 +45,8 @@ const config: QuartzConfig = {
           gray: "#646464",
           darkgray: "#d4d4d4",
           dark: "#ebebec",
-          secondary: "#7b97aa",
-          tertiary: "#84a59d",
+          secondary: "#f2b6de",
+          tertiary: "#89bdf4",
           highlight: "rgba(143, 159, 169, 0.15)",
           textHighlight: "#b3aa0288",
         },
@@ -71,14 +71,77 @@ const config: QuartzConfig = {
       Plugin.TableOfContents(),
       Plugin.CrawlLinks({ markdownLinkResolution: "shortest" }),
       Plugin.Description(),
-      Plugin.Latex({ renderEngine: "katex" }),
+      Plugin.Latex({ 
+        // for some reason the macros only work when this is katex and not mathjax
+        renderEngine: "katex", 
+        customMacros: {
+          // Sets
+          "\\R": "\\mathbb{R}",
+          "\\N": "\\mathbb{N}",
+          "\\Z": "\\mathbb{Z}",
+          "\\C": "\\mathbb{C}",
+          "\\Q": "\\mathbb{Q}",
+          "\\RQ": "\\R\\backslash\\Q", // Note: Assumes \R is defined above or standard
+          "\\cA": "\\mathcal{A}",
+	        "\\sR": "\\mathscr{R}",
+
+          // // Statistics
+          "\\var": "\\text{Var}",
+          "\\Binom": "\\text{Binom}",
+          "\\bias": "\\text{Bias}",
+          "\\pois": "\\text{Pois}",
+          "\\Exp": "\\text{Exp}",
+          "\\P": "\\mathbb{P}", // From \renewcommand{\P}
+          "\\Cov": "\\text{Cov}",
+        
+          // Linear Algebra
+          "\\trace": "\\text{trace}",
+        
+          // Abstract Algebra
+          "\\ker": "\\text{Ker }", // From \renewcommand{\ker} - includes space
+          "\\kerphi": "\\text{Ker }\\varphi", // Expanded based on \ker above
+          "\\id": "\\text{Id}",
+          "\\GL": "\\text{GL}",
+          "\\SL": "\\text{SL}",
+        
+          // Analysis
+          "\\Re": "\\text{Re}", // From \renewcommand{\Re}
+          "\\Im": "\\text{Im}", // From \renewcommand{\Im}
+          "\\diam": "\\text{diam}",
+          "\\vepsi": "\\varepsilon",
+          "\\ovl": "\\overline{#1}",
+          "\\unl": "\\underline{#1}",
+        
+          // Calculus
+          "\\del": "\\partial",
+        
+          // Misc
+          "\\notexists": "\\nexists",
+          "\\vvf": "\\textbf{f}",
+          "\\rrarrow": "\\rightrightarrows"
+        },
+      }),
     ],
     filters: [Plugin.RemoveDrafts()],
     emitters: [
       Plugin.AliasRedirects(),
       Plugin.ComponentResources(),
       Plugin.ContentPage(),
-      Plugin.FolderPage(),
+      Plugin.FolderPage({
+        sort: (a, b) => {
+            const orderA = a.frontmatter?.tags?.find((tag: string) => tag.startsWith("order:"))?.split(":")[1] as number | undefined ?? Infinity;
+            const orderB = b.frontmatter?.tags?.find((tag: string) => tag.startsWith("order:"))?.split(":")[1] as number | undefined ?? Infinity;
+            
+            if (orderA !== orderB) {
+              return orderA - orderB; // Ascending numerical sort
+            }
+ 
+            // Fallback sort: if order is the same or missing, sort by file path
+            const titleA = a.filePath ?? ""; // Use filePath as fallback key
+            const titleB = b.filePath ?? "";
+            return titleA.localeCompare(titleB, undefined, { numeric: true, sensitivity: 'base' });
+          }
+      }),
       Plugin.TagPage(),
       Plugin.ContentIndex({
         enableSiteMap: true,
@@ -89,7 +152,7 @@ const config: QuartzConfig = {
       Plugin.Favicon(),
       Plugin.NotFoundPage(),
       // Comment out CustomOgImages to speed up build time
-      Plugin.CustomOgImages(),
+      // Plugin.CustomOgImages(),
     ],
   },
 }

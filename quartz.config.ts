@@ -117,7 +117,7 @@ const config: QuartzConfig = {
           "\\unl": "\\underline{#1}",
 
           // Topology
-          "\\Cl": "\\text{Cl}"
+          "\\Cl": "\\text{Cl}",
         
           // Calculus
           "\\del": "\\partial",

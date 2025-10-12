@@ -8,7 +8,7 @@ import * as Plugin from "./quartz/plugins"
  */
 const config: QuartzConfig = {
   configuration: {
-    pageTitle: "kytrinh.me/obsidian-notes",
+    pageTitle: "kyle's notes",
     pageTitleSuffix: "",
     enableSPA: true,
     enablePopovers: true,
@@ -18,7 +18,7 @@ const config: QuartzConfig = {
     locale: "en-US",
     baseUrl: "pink10000.github.io",
     ignorePatterns: ["private", "templates", ".obsidian"],
-    defaultDateType: "modified",
+    defaultDateType: "created",
     theme: {
       fontOrigin: "googleFonts",
       cdnCaching: true,
@@ -59,6 +59,10 @@ const config: QuartzConfig = {
       Plugin.CreatedModifiedDate({
         priority: ["frontmatter", "git", "filesystem"],
       }),
+      Plugin.TikzJax({ showConsole: false }),
+
+      // This plugin needs to be before `Plugin.ObsidianFlavoredMarkdown`. 
+      // See https://quartz.jzhao.xyz/features/Mermaid-diagrams 
       Plugin.SyntaxHighlighting({
         theme: {
           light: "github-light",
@@ -111,6 +115,9 @@ const config: QuartzConfig = {
           "\\vepsi": "\\varepsilon",
           "\\ovl": "\\overline{#1}",
           "\\unl": "\\underline{#1}",
+
+          // Topology
+          "\\Cl": "\\text{Cl}"
         
           // Calculus
           "\\del": "\\partial",

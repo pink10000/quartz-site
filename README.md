@@ -16,3 +16,14 @@ Quartz v4 features a from-the-ground rewrite focusing on end-user extensibility 
     <img src="https://cdn.jsdelivr.net/gh/jackyzha0/jackyzha0/sponsorkit/sponsors.svg" />
   </a>
 </p>
+
+
+# Testing:
+```
+npx quartz build --serve
+```
+
+# Pulling Content
+```
+git submodule update --init --recursive --remote --force
+```

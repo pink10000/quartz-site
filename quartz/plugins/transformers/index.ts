@@ -11,3 +11,7 @@ export { SyntaxHighlighting } from "./syntax"
 export { TableOfContents } from "./toc"
 export { HardLineBreaks } from "./linebreaks"
 export { RoamFlavoredMarkdown } from "./roam"
+
+// from here: https://github.com/aarnphm/aarnphm.github.io/blob/main/quartz/plugins/transformers/index.ts
+// many thanks to Aaron Pham
+export { TikzJax } from "./tikz"

@@ -1,0 +1,78 @@
+figure.tikz {
+  position: relative;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid var(--lightgray);
+  border-radius: 5px;
+  background-color: var(--light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  // Hide the mathml element (used only for storing source code)
+  .tikz-mathml {
+    display: none;
+  }
+
+  // Center the SVG diagram - make it bigger
+  svg {
+    max-width: 100%;
+    height: auto;
+    transform: scale(1.5);
+    transform-origin: center;
+    margin: 2rem 0;
+  }
+
+  // Style the figcaption (source code button) - positioned at top right
+  figcaption {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--gray);
+    z-index: 10;
+
+    em {
+      display: none; // Hide the "source code" text label
+    }
+
+    button.source-code-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      padding: 0.5rem;
+      width: 2rem;
+      height: 2rem;
+      color: var(--gray);
+      border: 1px solid var(--lightgray);
+      background-color: var(--light);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+
+      &:hover {
+        border-color: var(--secondary);
+        color: var(--secondary);
+      }
+
+      &:focus {
+        outline: 0;
+      }
+
+      .check-icon {
+        display: none;
+      }
+
+      svg {
+        vertical-align: middle;
+      }
+    }
+  }
+}
+

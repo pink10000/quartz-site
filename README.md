@@ -19,8 +19,15 @@ Quartz v4 features a from-the-ground rewrite focusing on end-user extensibility 
 
 
 # Testing:
+
+Compile with tikz support.
 ```
 npx quartz build --serve
+```
+
+Compile without tikz support.
+```
+SKIP_TIKZ=1 npx quartz build --serve
 ```
 
 # Pulling Content

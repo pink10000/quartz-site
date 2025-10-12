@@ -118,6 +118,12 @@ export const TikzJax: QuartzTransformerPlugin<Options> = (opts?: Options) => {
     name: "TikzJax",
     // TODO: maybe we should render client-side instead of server-side? (build-time would increase).
     markdownPlugins({ argv }) {
+      // Skip TikZ processing if SKIP_TIKZ environment variable is set
+      if (process.env.SKIP_TIKZ) {
+        console.log("Skipping TikZ processing (SKIP_TIKZ is set)")
+        return []
+      }
+
       return [
         () => async (tree) => {
           const nodes: TikzNode[] = []

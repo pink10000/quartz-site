@@ -1,14 +1,14 @@
 figure.tikz {
   position: relative;
   margin: 1.5rem 0;
-  padding: 1rem;
+  padding: 0.5rem;
   border: 1px solid var(--lightgray);
   border-radius: 5px;
   background-color: var(--light);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 
   // Hide the mathml element (used only for storing source code)
   .tikz-mathml {
@@ -21,7 +21,7 @@ figure.tikz {
     height: auto;
     transform: scale(1.5);
     transform-origin: center;
-    margin: 2rem 0;
+    margin: 1rem 0;
   }
 
   // Style the figcaption (source code button) - positioned at top right

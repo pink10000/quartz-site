@@ -125,7 +125,7 @@ const config: QuartzConfig = {
           // Misc
           "\\notexists": "\\nexists",
           "\\vvf": "\\textbf{f}",
-          "\\rrarrow": "\\rightrightarrows"
+          "\\rrarrow": "\\rightrightarrows",
           "\\ceil": "\\left\\lceil #1 \\right\\rceil"
         },
       }),

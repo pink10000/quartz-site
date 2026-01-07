@@ -30,6 +30,16 @@ Compile without tikz support.
 SKIP_TIKZ=1 npx quartz build --serve
 ```
 
+Compile without custom OG Images.
+```
+SKIP_OG_IMAGE=1 npx quartz build --serve
+```
+
+Test OG Images.
+```
+npx tsx quartz/scripts/og-debug.tsx notes/<TOP LEVEL FOLDER>/title
+```
+
 # Pulling Content
 ```
 git submodule update --init --recursive --remote --force

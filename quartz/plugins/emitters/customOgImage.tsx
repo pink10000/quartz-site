@@ -41,6 +41,19 @@ export const customOgImage: SocialImageOptions["imageStructure"] = ({
         <path d="m9 12 2 2 4-4"/>
       </svg>
     ),
+    "computational_stochastics": (
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+        <path d="M7 8 L9 11 L12 9 L15 13 L17 10" />
+        <circle cx="7" cy="8" r="0.5" fill="currentColor" />
+        <circle cx="9" cy="11" r="0.5" fill="currentColor" />
+        <circle cx="12" cy="9" r="0.5" fill="currentColor" />
+        <circle cx="15" cy="13" r="0.5" fill="currentColor" />
+        <circle cx="17" cy="10" r="0.5" fill="currentColor" />
+      </svg>
+    ),
     "cryptography": (
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="7.5" cy="15.5" r="5.5"/>

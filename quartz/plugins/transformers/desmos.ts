@@ -1,7 +1,7 @@
 // quartz/plugins/transformers/desmos.ts
 import { QuartzTransformerPlugin } from "../types"
 import { visit } from "unist-util-visit"
-import { Code, Image } from "mdast"
+import { Code } from "mdast"
 import fs from "node:fs/promises"
 import path from "node:path"
 import crypto from "node:crypto"
@@ -259,11 +259,16 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
                             await fs.access(filePath)
                             
                             // 5. Transform AST to Image if file exists
-                            const imageNode: Image = {
-                            type: "image",
-                            url: `/notes/desmos/${filename}`, // Absolute path from site root
-                            alt: "Desmos Graph",
-                            title: "Desmos Graph",
+                            const imageNode: any = {
+                                type: "image",
+                                url: `/notes/desmos/${filename}`, // Absolute path from site root
+                                alt: "Desmos Graph",
+                                title: "Desmos Graph",
+                                data: {
+                                    hProperties: {
+                                        className: ["desmos-graph"]
+                                    }
+                                }
                             }
                             console.log(`Desmos SVG found: ${filename}. Replacing code block.`)
                             parent.children.splice(index, 1, imageNode)

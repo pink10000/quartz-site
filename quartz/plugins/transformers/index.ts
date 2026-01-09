@@ -15,3 +15,6 @@ export { RoamFlavoredMarkdown } from "./roam"
 // from here: https://github.com/aarnphm/aarnphm.github.io/blob/main/quartz/plugins/transformers/index.ts
 // many thanks to Aaron Pham
 export { TikzJax } from "./tikz"
+
+// Custom Desmos Transformer
+export { DesmosGraph } from "./desmos"

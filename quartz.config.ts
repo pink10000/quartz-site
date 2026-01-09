@@ -60,6 +60,7 @@ const config: QuartzConfig = {
       Plugin.CreatedModifiedDate({
         priority: ["frontmatter", "filesystem"],
       }),
+      Plugin.DesmosGraph(),
       Plugin.TikzJax({ showConsole: false }),
 
       // This plugin needs to be before `Plugin.ObsidianFlavoredMarkdown`. 
@@ -135,6 +136,7 @@ const config: QuartzConfig = {
     filters: [Plugin.RemoveDrafts()],
     emitters: [
       Plugin.AliasRedirects(),
+      Plugin.DesmosAssets(),
       Plugin.ComponentResources(),
       Plugin.ContentPage(),
       Plugin.FolderPage({

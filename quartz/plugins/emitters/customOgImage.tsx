@@ -110,7 +110,15 @@ export const customOgImage: SocialImageOptions["imageStructure"] = ({
         <path d="M3 3v18h18"/>
         <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
       </svg>
-    )
+    ),
+    "search_and_optimization": (
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.7" strokeLinecap="round" strokeLinejoin="round">
+        <ellipse cx="12" cy="12" rx="10" ry="7" />
+        <ellipse cx="12" cy="12" rx="6.5" ry="4.5" />
+        <ellipse cx="12" cy="12" rx="3" ry="2" />
+        <path d="M2.5 12 L5.5 8 L8.5 15 L10.5 11 L12 12" />
+      </svg>
+    ),
   }
 
   

@@ -119,21 +119,28 @@ function adjustBounds(settings: Partial<GraphSettings>) {
 function parseSettings(settingsStr: string): Partial<GraphSettings> {
     const settings: any = {}
     settingsStr.split(/[;\n]/g).forEach(s => {
-        const parts = s.split("=")
-        if (parts.length < 2) return
-            const key = parts[0].trim()
-            const val = parts[1].trim()
+        const trimmed = s.trim()
+        if (trimmed === "") return
+        
+        const parts = trimmed.split("=")
+        const key = parts[0].trim()
+        const val = parts.length > 1 ? parts[1].trim() : undefined
         
         switch (key) {
             case "hideAxisNumbers":
             case "xAxisLogarithmic":
             case "yAxisLogarithmic":
             case "grid":
-                settings[key] = val.toLowerCase() === "true"
+                // If no value is provided, default to true
+                if (!val) {
+                    settings[key] = true
+                } else {
+                    settings[key] = val.toLowerCase() === "true"
+                }
                 break
             case "xAxisLabel":
             case "yAxisLabel":
-                settings[key] = val
+                if (val !== undefined) settings[key] = val
                 break
             case "top":
             case "bottom":
@@ -141,15 +148,19 @@ function parseSettings(settingsStr: string): Partial<GraphSettings> {
             case "right":
             case "width":
             case "height":
-                settings[key] = simpleEvaluate(val)
+                if (val !== undefined) settings[key] = simpleEvaluate(val)
                 break
             case "degreeMode":
-                const mode = parseStringToEnum(DegreeMode, val)
-                if (mode) settings[key] = mode
+                if (val !== undefined) {
+                    const mode = parseStringToEnum(DegreeMode, val)
+                    if (mode) settings[key] = mode
+                }
                 break
             case "defaultColor":
-                const color = parseColor(val)
-                if (color) settings[key] = color
+                if (val !== undefined) {
+                    const color = parseColor(val)
+                    if (color) settings[key] = color
+                }
                 break
         }
     })
@@ -169,7 +180,7 @@ function parseEquation(eq: string): Equation {
         if (upper === "NOLINE") { equation.line = false; return }
         if (upper === "LABEL") { equation.label = ""; return }
         if (upper.startsWith("LABEL:")) {
-            equation.label = seg.substring(6).trim()
+            equation.label = seg.split(":").slice(1).join(":").trim()
             return
         }
 

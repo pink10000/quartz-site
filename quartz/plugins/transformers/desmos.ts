@@ -258,7 +258,11 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
                         // 4. Calculate Hash
                         // We structure the object exactly as obsidian-desmos does: { equations, settings }
                         const graphObj = { equations, settings }
-                        const hash = crypto.createHash("sha256").update(JSON.stringify(graphObj)).digest("hex")
+                        const jsonStr = JSON.stringify(graphObj)
+                        const hash = crypto.createHash("sha256").update(jsonStr).digest("hex")
+                        
+                        // Debug logging to help diagnose hash mismatches
+                        console.log(`Desmos graph JSON: ${jsonStr}`)
 
                         const filename = `desmos-graph-${hash}.svg`
                         const filePath = path.join(desmosDir, filename)

@@ -178,17 +178,18 @@ function parseEquation(eq: string): Equation {
         const upper = seg.toUpperCase()
         if (upper === "HIDDEN") { equation.hidden = true; return }
         if (upper === "NOLINE") { equation.line = false; return }
-        if (upper === "LABEL") { equation.label = ""; return }
-        if (upper.startsWith("LABEL:")) {
-            equation.label = seg.split(":").slice(1).join(":").trim()
-            return
-        }
 
         const style = (parseStringToEnum(LineStyle, upper) as LineStyle | null) ?? (parseStringToEnum(PointStyle, upper) as PointStyle | null)
         if (style) { equation.style = style; return }
         
         const color = parseColor(seg)
         if (color) { equation.color = color; return }
+
+        if (upper.startsWith("LABEL:")) {
+            equation.label = seg.split(":").slice(1).join(":").trim()
+            return
+        }
+        if (upper === "LABEL") { equation.label = ""; return }
 
         if (!equation.restrictions) equation.restrictions = []
         equation.restrictions.push(seg)
@@ -258,11 +259,7 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
                         // 4. Calculate Hash
                         // We structure the object exactly as obsidian-desmos does: { equations, settings }
                         const graphObj = { equations, settings }
-                        const jsonStr = JSON.stringify(graphObj)
-                        const hash = crypto.createHash("sha256").update(jsonStr).digest("hex")
-                        
-                        // Debug logging to help diagnose hash mismatches
-                        console.log(`Desmos graph JSON: ${jsonStr}`)
+                        const hash = crypto.createHash("sha256").update(JSON.stringify(graphObj)).digest("hex")
 
                         const filename = `desmos-graph-${hash}.svg`
                         const filePath = path.join(desmosDir, filename)

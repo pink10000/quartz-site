@@ -2,8 +2,8 @@ import test, { describe } from "node:test"
 import assert from "node:assert"
 import crypto from "node:crypto"
 
-// Import the functions we need to test
-// Since parseSettings and parseEquation are not exported, we'll need to test through the hash calculation
+// We'll test the parsing logic by recreating the key parts
+// Since parseSettings and parseEquation are not exported, we test the hash calculation behavior
 
 describe("Desmos Hash Calculation", () => {
   // Helper function to calculate hash exactly as obsidian-desmos does
@@ -62,5 +62,25 @@ describe("Desmos Hash Calculation", () => {
     const hash2 = calculateHash(equations2, settings2)
     
     assert.notStrictEqual(hash1, hash2, "Different settings should produce different hashes")
+  })
+
+  test("specific hash values match expected output", () => {
+    // Test case 1: grid=true should produce the same hash as grid without value
+    const settings1 = { grid: true }
+    const equations1 = [{ equation: "y=x" }]
+    const hash1 = calculateHash(equations1, settings1)
+    assert.strictEqual(hash1, "429bfd0821423470559a6d8634617563141736ee132788cb71cb9d0b6d83dc99")
+    
+    // Test case 2: Label with multiple colons
+    const equations2 = [{ equation: "y=x", label: "a:b:c" }]
+    const settings2 = {}
+    const hash2 = calculateHash(equations2, settings2)
+    assert.strictEqual(hash2, "b15be6cc08faf9fdec8d66c71e399c27461b6d0bb6e7637dcc60ffd657b7ded1")
+    
+    // Test case 3: Empty label
+    const equations3 = [{ equation: "y=x", label: "" }]
+    const settings3 = {}
+    const hash3 = calculateHash(equations3, settings3)
+    assert.strictEqual(hash3, "2cc4673cbd2771b624acf6b187f5ea54f3cebfd7ab2b9e6d2aa4c51ad29d3872")
   })
 })

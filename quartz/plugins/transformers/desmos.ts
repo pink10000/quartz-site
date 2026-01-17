@@ -5,7 +5,6 @@ import { Code } from "mdast"
 import * as fs from "node:fs/promises"
 import { existsSync } from "node:fs"
 import * as path from "node:path"
-import * as crypto from "node:crypto"
 import { chromium, Browser } from "playwright"
 
 // --- Desmos Parsing Helpers ---
@@ -354,7 +353,7 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
         name: "DesmosGraph",
         markdownPlugins(ctx) {
             return [
-                () => async (tree, _file) => {
+                () => async (tree, file) => {
                 const nodesToProcess: { node: Code; index: number; parent: any }[] = []
                 
                 // 1. Collect all desmos-graph nodes
@@ -370,7 +369,14 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
                 const outputDir = path.join(ctx.argv.output, "static", "desmos")
                 await fs.mkdir(outputDir, { recursive: true })
 
-                // 3. Process each node
+                // 3. Get a safe filename prefix from the current file path
+                const filePath = file.history[0] || "unknown"
+                const fileBasename = path.basename(filePath, path.extname(filePath))
+                // Sanitize the filename to be filesystem-safe
+                const safeBasename = fileBasename.replace(/[^a-zA-Z0-9-_]/g, '-')
+
+                // 4. Process each node with sequential numbering per file
+                let graphCount = 1
                 for (const { node, index, parent } of nodesToProcess) {
                     const content = node.value
 
@@ -391,24 +397,15 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
                         // 3. Adjust Layout
                         adjustBounds(settings)
                         
-                        // 4. Calculate Hash for filename uniqueness
-                        const graphObj = { equations, settings }
-                        const hash = crypto.createHash("sha256").update(JSON.stringify(graphObj)).digest("hex")
+                        // 4. Use sequential filename based on file and graph number
+                        const filename = `${safeBasename}-desmos${graphCount}.svg`
+                        const outputFilePath = path.join(outputDir, filename)
 
-                        const filename = `desmos-graph-${hash}.svg`
-                        const filePath = path.join(outputDir, filename)
-
-                        // 5. Generate SVG if it doesn't exist
-                        try {
-                            await fs.access(filePath)
-                            console.log(`Desmos SVG already exists: ${filename}`)
-                        } catch {
-                            // Generate the SVG
-                            console.log(`Generating Desmos SVG: ${filename}`)
-                            const svgData = await generateDesmosSVG(equations, settings)
-                            await fs.writeFile(filePath, svgData, 'utf-8')
-                            console.log(`Desmos SVG generated: ${filename}`)
-                        }
+                        // 5. Generate SVG (always regenerate to ensure freshness)
+                        console.log(`Generating Desmos SVG: ${filename}`)
+                        const svgData = await generateDesmosSVG(equations, settings)
+                        await fs.writeFile(outputFilePath, svgData, 'utf-8')
+                        console.log(`Desmos SVG generated: ${filename}`)
                         
                         // 6. Transform AST to Image
                         const imageNode: any = {
@@ -423,6 +420,8 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
                             }
                         }
                         parent.children.splice(index, 1, imageNode)
+                        
+                        graphCount++
                     } catch (e) {
                         console.error(`Failed to process desmos graph: ${e}`)
                     }

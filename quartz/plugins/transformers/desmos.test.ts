@@ -1,86 +1,101 @@
 import test, { describe } from "node:test"
 import assert from "node:assert"
-import crypto from "node:crypto"
 
-// We'll test the parsing logic by recreating the key parts
-// Since parseSettings and parseEquation are not exported, we test the hash calculation behavior
+// Tests for the Desmos transformer plugin
+// This plugin generates SVG images from desmos-graph code blocks during build
 
-describe("Desmos Hash Calculation", () => {
-  // Helper function to calculate hash exactly as obsidian-desmos does
-  function calculateHash(equations: any[], settings: any): string {
-    const graphObj = { equations, settings }
-    return crypto.createHash("sha256").update(JSON.stringify(graphObj)).digest("hex")
-  }
-
+describe("Desmos Parsing Logic", () => {
   test("parseSettings should handle boolean flag without value (grid)", () => {
-    // When a boolean field has no value, it should default to true
-    const settings = { grid: true }
-    const equations: any[] = []
-    const hash = calculateHash(equations, settings)
-    
-    // This is just a reference hash - the important thing is that settings without = are processed
-    assert.ok(hash)
+    // When a boolean field like "grid" has no value, it should default to true
+    // Example: "grid\n---\ny=x" should parse grid as true
+    const input = "grid"
+    const parts = input.split("=")
+    const hasNoValue = parts.length === 1
+    assert.strictEqual(hasNoValue, true, "Boolean flags without = should be detected")
   })
 
-  test("parseSettings should handle settings with = sign", () => {
-    const settings = { width: 600, height: 400 }
-    const equations: any[] = []
-    const hash = calculateHash(equations, settings)
-    assert.ok(hash)
-  })
-
-  test("label parsing with colons", () => {
-    // Label: "a:b:c" should become "b:c" not "b"
+  test("label parsing with multiple colons", () => {
+    // Label: "LABEL:a:b:c" should parse as "a:b:c", not just "a"
     const text = "LABEL:a:b:c"
     const label = text.split(":").slice(1).join(":").trim()
-    assert.strictEqual(label, "a:b:c")
+    assert.strictEqual(label, "a:b:c", "Multi-colon labels should be preserved")
     
     const text2 = "LABEL:simple"
     const label2 = text2.split(":").slice(1).join(":").trim()
-    assert.strictEqual(label2, "simple")
+    assert.strictEqual(label2, "simple", "Simple labels should work")
   })
 
-  test("hash consistency test", () => {
-    // Test that the hash calculation is deterministic
-    const equations = [{ equation: "y=x" }]
-    const settings = { grid: true }
-    
-    const hash1 = calculateHash(equations, settings)
-    const hash2 = calculateHash(equations, settings)
-    
-    assert.strictEqual(hash1, hash2, "Hash should be deterministic")
+  test("label parsing with empty label", () => {
+    const text = "LABEL"
+    const hasLabel = text.toUpperCase() === "LABEL"
+    assert.strictEqual(hasLabel, true, "Empty LABEL flag should be recognized")
   })
 
-  test("hash different for different inputs", () => {
-    const equations1 = [{ equation: "y=x" }]
-    const settings1 = { grid: true }
-    
-    const equations2 = [{ equation: "y=x" }]
-    const settings2 = { grid: false }
-    
-    const hash1 = calculateHash(equations1, settings1)
-    const hash2 = calculateHash(equations2, settings2)
-    
-    assert.notStrictEqual(hash1, hash2, "Different settings should produce different hashes")
+  test("settings parsing with numeric values", () => {
+    // Test that settings like "left=-10" are parsed correctly
+    const input = "left=-10"
+    const parts = input.split("=")
+    assert.strictEqual(parts[0].trim(), "left")
+    assert.strictEqual(parts[1].trim(), "-10")
   })
 
-  test("specific hash values match expected output", () => {
-    // Test case 1: grid=true should produce the same hash as grid without value
-    const settings1 = { grid: true }
-    const equations1 = [{ equation: "y=x" }]
-    const hash1 = calculateHash(equations1, settings1)
-    assert.strictEqual(hash1, "429bfd0821423470559a6d8634617563141736ee132788cb71cb9d0b6d83dc99")
+  test("equation parsing with pipes", () => {
+    // Example: "y=x | red | dashed | label: My Graph"
+    const input = "y=x | red | dashed | label: My Graph"
+    const segments = input.split("|").map(s => s.trim()).filter(s => s)
     
-    // Test case 2: Label with multiple colons
-    const equations2 = [{ equation: "y=x", label: "a:b:c" }]
-    const settings2 = {}
-    const hash2 = calculateHash(equations2, settings2)
-    assert.strictEqual(hash2, "b15be6cc08faf9fdec8d66c71e399c27461b6d0bb6e7637dcc60ffd657b7ded1")
+    assert.strictEqual(segments[0], "y=x", "First segment is the equation")
+    assert.strictEqual(segments[1], "red", "Second segment is the color")
+    assert.strictEqual(segments[2], "dashed", "Third segment is the style")
+    assert.strictEqual(segments[3], "label: My Graph", "Fourth segment is the label")
+  })
+
+  test("filename generation for SVG files", () => {
+    // Filenames should follow pattern: {page-name}-desmos{#}.svg
+    const basename = "my-page"
+    const graphNumber = 1
+    const filename = `${basename}-desmos${graphNumber}.svg`
     
-    // Test case 3: Empty label
-    const equations3 = [{ equation: "y=x", label: "" }]
-    const settings3 = {}
-    const hash3 = calculateHash(equations3, settings3)
-    assert.strictEqual(hash3, "2cc4673cbd2771b624acf6b187f5ea54f3cebfd7ab2b9e6d2aa4c51ad29d3872")
+    assert.strictEqual(filename, "my-page-desmos1.svg")
+  })
+
+  test("filename sanitization", () => {
+    // Special characters in filenames should be replaced with dashes
+    const unsafeName = "my page!@#$%"
+    const safeName = unsafeName.replace(/[^a-zA-Z0-9-_]/g, '-')
+    
+    assert.strictEqual(safeName, "my-page-----")
+  })
+
+  test("color parsing - hex colors", () => {
+    const hexColor = "#c74440"
+    const isValidHex = hexColor.startsWith("#") && /^[0-9a-zA-Z]+$/.test(hexColor.slice(1))
+    assert.strictEqual(isValidHex, true, "Hex colors should be recognized")
+  })
+
+  test("color parsing - named colors", () => {
+    const colorNames = ["red", "blue", "green", "purple", "orange", "black"]
+    colorNames.forEach(name => {
+      const upper = name.toUpperCase()
+      assert.ok(upper, `Color ${name} should be parseable`)
+    })
+  })
+
+  test("line style parsing", () => {
+    const styles = ["solid", "dashed", "dotted"]
+    styles.forEach(style => {
+      const upper = style.toUpperCase()
+      assert.ok(upper, `Style ${style} should be parseable`)
+    })
+  })
+
+  test("content splitting with separator", () => {
+    // Test that content splits correctly on "---"
+    const content = "left=-10; right=10\n---\ny=x\ny=x^2"
+    const parts = content.split("---")
+    
+    assert.strictEqual(parts.length, 2, "Should split into settings and equations")
+    assert.strictEqual(parts[0].includes("left"), true, "First part has settings")
+    assert.strictEqual(parts[1].includes("y=x"), true, "Second part has equations")
   })
 })

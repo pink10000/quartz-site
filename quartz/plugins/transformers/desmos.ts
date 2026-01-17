@@ -355,8 +355,20 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
 
                     // Get safe filename prefix from current file
                     const filePath = file.history[0] || "unknown"
-                    const fileBasename = path.basename(filePath, path.extname(filePath))
-                    const safeBasename = fileBasename.replace(/[^a-zA-Z0-9-_]/g, '-')
+                    let relativePath = filePath
+                    if (path.isAbsolute(filePath)) {
+                        relativePath = path.relative(ctx.argv.directory, filePath)
+                    }
+
+                    // Remove extension
+                    const ext = path.extname(relativePath)
+                    const nameWithoutExt = relativePath.substring(0, relativePath.length - ext.length)
+                    
+                    // Remove "content/notes/" or "notes/" prefix if present
+                    const cleanPath = nameWithoutExt.replace(/^(content[\/\\])?notes[\/\\]/, "")
+                    
+                    // Create safe filename: replace directory separators and other unsafe chars with dashes
+                    const safeBasename = cleanPath.replace(/[^a-zA-Z0-9-_]/g, '-')
 
                     // Process each graph with sequential numbering
                     let graphCount = 1

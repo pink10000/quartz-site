@@ -1,5 +1,6 @@
 import { QuartzConfig } from "./quartz/cfg"
 import * as Plugin from "./quartz/plugins"
+import { customOgImage } from "./quartz/plugins/emitters/customOgImage"
 
 /**
  * Quartz 4 Configuration
@@ -59,6 +60,7 @@ const config: QuartzConfig = {
       Plugin.CreatedModifiedDate({
         priority: ["frontmatter", "filesystem"],
       }),
+      Plugin.DesmosGraph(),
       Plugin.TikzJax({ showConsole: false }),
 
       // This plugin needs to be before `Plugin.ObsidianFlavoredMarkdown`. 
@@ -97,6 +99,7 @@ const config: QuartzConfig = {
           "\\Exp": "\\text{Exp}",
           "\\P": "\\mathbb{P}", // From \renewcommand{\P}
           "\\Cov": "\\text{Cov}",
+          "\\E": "\\mathbb{E}\\left\\{#1\\right\\}",
         
           // Linear Algebra
           "\\trace": "\\text{trace}",
@@ -133,6 +136,7 @@ const config: QuartzConfig = {
     filters: [Plugin.RemoveDrafts()],
     emitters: [
       Plugin.AliasRedirects(),
+      Plugin.DesmosAssets(),
       Plugin.ComponentResources(),
       Plugin.ContentPage(),
       Plugin.FolderPage({
@@ -160,7 +164,9 @@ const config: QuartzConfig = {
       Plugin.Favicon(),
       Plugin.NotFoundPage(),
       // Comment out CustomOgImages to speed up build time
-      // Plugin.CustomOgImages(),
+      ...(!process.env.SKIP_OG_IMAGE
+        ? [Plugin.CustomOgImages({ imageStructure: customOgImage })]
+        : []),
     ],
   },
 }

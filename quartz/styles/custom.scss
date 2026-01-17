@@ -1,4 +1,5 @@
 @use "./base.scss";
+
 /*
   This snippet centers all Mermaid diagrams in Obsidian.
 */
@@ -8,3 +9,11 @@ div.mermaid {
 }
 
 // put your custom CSS here!
+
+/* Horizontally center the graph in the page content */
+.desmos-graph {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+

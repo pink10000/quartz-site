@@ -2,9 +2,10 @@
 import { QuartzTransformerPlugin } from "../types"
 import { visit } from "unist-util-visit"
 import { Code } from "mdast"
-import fs from "node:fs/promises"
-import path from "node:path"
-import crypto from "node:crypto"
+import * as fs from "node:fs/promises"
+import * as path from "node:path"
+import * as crypto from "node:crypto"
+import { chromium, Browser } from "playwright"
 
 // --- Desmos Parsing Helpers ---
 
@@ -198,6 +199,139 @@ function parseEquation(eq: string): Equation {
     return equation
 }
 
+// Global browser instance to reuse across all graphs
+let browserInstance: Browser | null = null
+
+async function getBrowser(): Promise<Browser> {
+    if (!browserInstance) {
+        browserInstance = await chromium.launch({ headless: true })
+    }
+    return browserInstance
+}
+
+async function closeBrowser() {
+    if (browserInstance) {
+        await browserInstance.close()
+        browserInstance = null
+    }
+}
+
+async function generateDesmosSVG(
+    equations: Equation[],
+    settings: Partial<GraphSettings>
+): Promise<string> {
+    const browser = await getBrowser()
+    const page = await browser.newPage()
+
+    try {
+        // Merge settings with defaults
+        const fullSettings = { ...DEFAULT_GRAPH_SETTINGS, ...settings }
+
+        // Build expressions array for Desmos
+        const expressions = equations.map(eq => {
+            const expr: any = {
+                latex: eq.equation,
+            }
+            
+            if (eq.color) expr.color = eq.color
+            else if (fullSettings.defaultColor) expr.color = fullSettings.defaultColor
+            
+            if (eq.hidden) expr.hidden = true
+            if (eq.line === false) expr.lines = false
+            if (eq.label) {
+                expr.showLabel = true
+                expr.label = eq.label
+            }
+            
+            if (eq.style) {
+                if (eq.style === LineStyle.DASHED) expr.lineStyle = "DASHED"
+                else if (eq.style === LineStyle.DOTTED) expr.lineStyle = "DOTTED"
+                else if (eq.style === PointStyle.OPEN) expr.pointStyle = "OPEN"
+                else if (eq.style === PointStyle.CROSS) expr.pointStyle = "CROSS"
+            }
+            
+            return expr
+        })
+
+        // Create HTML page with Desmos API
+        const html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #calculator { width: ${fullSettings.width}px; height: ${fullSettings.height}px; }
+    </style>
+</head>
+<body>
+    <div id="calculator"></div>
+    <script>
+        const calculator = Desmos.GraphingCalculator(document.getElementById('calculator'), {
+            expressions: false,
+            settingsMenu: false,
+            zoomButtons: false,
+            expressionsTopbar: false,
+            border: false,
+            lockViewport: true
+        });
+
+        // Set graph bounds and settings
+        calculator.setMathBounds({
+            left: ${fullSettings.left},
+            right: ${fullSettings.right},
+            bottom: ${fullSettings.bottom},
+            top: ${fullSettings.top}
+        });
+
+        calculator.updateSettings({
+            degreeMode: ${fullSettings.degreeMode === DegreeMode.Degrees},
+            showGrid: ${fullSettings.grid},
+            showXAxis: ${!fullSettings.hideAxisNumbers},
+            showYAxis: ${!fullSettings.hideAxisNumbers},
+            xAxisNumbers: ${!fullSettings.hideAxisNumbers},
+            yAxisNumbers: ${!fullSettings.hideAxisNumbers},
+            polarMode: false
+        });
+
+        // Add equations
+        const expressions = ${JSON.stringify(expressions)};
+        expressions.forEach(expr => calculator.setExpression(expr));
+
+        // Signal ready
+        window.desmosReady = true;
+    </script>
+</body>
+</html>
+        `
+
+        await page.setContent(html)
+        
+        // Wait for Desmos to be ready
+        await page.waitForFunction(() => (window as any).desmosReady === true, { timeout: 10000 })
+        
+        // Wait a bit more for rendering
+        await page.waitForTimeout(500)
+
+        // Get the SVG data using asyncScreenshot
+        const svgData: string = await page.evaluate(async ({ width, height }) => {
+            const calc = (window as any).Desmos.GraphingCalculator(document.getElementById('calculator'))
+            const data: string = await calc.asyncScreenshot({
+                mode: 'stretch',
+                width: width,
+                height: height,
+                targetPixelRatio: 1,
+                format: 'svg'
+            })
+            return data
+        }, { width: fullSettings.width, height: fullSettings.height })
+
+        return svgData
+    } finally {
+        await page.close()
+    }
+}
+
 export const DesmosGraph: QuartzTransformerPlugin = () => {
     return {
         name: "DesmosGraph",
@@ -210,15 +344,14 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
                 visit(tree, "code", (node, index, parent) => {
                     if (node.lang === "desmos-graph") {
                     nodesToProcess.push({ node, index: index!, parent })
-                    console.log("Found desmos-graph code block to process.")
                     }
                 })
 
                 if (nodesToProcess.length === 0) return
 
-                // 2. Ensure directory exists logic or just point to it
-                // Assuming content/notes/.desmos is the destination
-                const desmosDir = path.join(ctx.argv.directory, "notes", ".desmos")
+                // 2. Ensure output directory exists
+                const outputDir = path.join(ctx.argv.output, "static", "desmos")
+                await fs.mkdir(outputDir, { recursive: true })
 
                 // 3. Process each node
                 for (const { node, index, parent } of nodesToProcess) {
@@ -226,11 +359,6 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
 
                     try {
                         // Parse Block Content
-                        
-                        // #################################################################
-                        // A: Parsing Logic Begins Here. 
-                        // https://github.com/Nigecat/obsidian-desmos/blob/323349d728a90fadf788cfb2bbcc9b936ac1548d/src/graph/parser.ts#L94-L119 
-                        // ################################################################# 
                         const split = content.split("---")
                         
                         // 1. Equations (last part)
@@ -239,59 +367,52 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
                             .split(/\r?\n/g)
                             .filter((equation) => equation.trim() !== "")
                             .map(parseEquation)
-                            // skip error hint since at this point it should NOT FAIL (otherwise no svg would exist anyway)
 
                         // 2. Settings (first part, if exists)
                         const settings = split.length > 1 ? parseSettings(split[0]) : {}
                         
-                        // ##############################################################
-                        // B: Bounds adjustment logic
-                        // https://github.com/Nigecat/obsidian-desmos/blob/323349d728a90fadf788cfb2bbcc9b936ac1548d/src/graph/parser.ts#L64-L92 
-                        // https://github.com/Nigecat/obsidian-desmos/blob/323349d728a90fadf788cfb2bbcc9b936ac1548d/src/graph/parser.ts#L368-L399
-                        // ##############################################################
                         // 3. Adjust Layout
                         adjustBounds(settings)
                         
-                        // ##############################################################
-                        // C: Hashing 
-                        // https://github.com/Nigecat/obsidian-desmos/blob/323349d728a90fadf788cfb2bbcc9b936ac1548d/src/utils.ts#L3-L21 
-                        // ##############################################################
-                        // 4. Calculate Hash
-                        // We structure the object exactly as obsidian-desmos does: { equations, settings }
+                        // 4. Calculate Hash for filename uniqueness
                         const graphObj = { equations, settings }
                         const hash = crypto.createHash("sha256").update(JSON.stringify(graphObj)).digest("hex")
 
                         const filename = `desmos-graph-${hash}.svg`
-                        const filePath = path.join(desmosDir, filename)
+                        const filePath = path.join(outputDir, filename)
 
-                        console.log(`Processing desmos-graph code block. Hash: ${hash}`)
-
-                        // Check if SVG exists
+                        // 5. Generate SVG if it doesn't exist
                         try {
                             await fs.access(filePath)
-                            
-                            // 5. Transform AST to Image if file exists
-                            const imageNode: any = {
-                                type: "image",
-                                url: `/notes/desmos/${filename}`, // Absolute path from site root
-                                alt: "Desmos Graph",
-                                title: "Desmos Graph",
-                                data: {
-                                    hProperties: {
-                                        className: ["desmos-graph"]
-                                    }
+                            console.log(`Desmos SVG already exists: ${filename}`)
+                        } catch {
+                            // Generate the SVG
+                            console.log(`Generating Desmos SVG: ${filename}`)
+                            const svgData = await generateDesmosSVG(equations, settings)
+                            await fs.writeFile(filePath, svgData, 'utf-8')
+                            console.log(`Desmos SVG generated: ${filename}`)
+                        }
+                        
+                        // 6. Transform AST to Image
+                        const imageNode: any = {
+                            type: "image",
+                            url: `/static/desmos/${filename}`,
+                            alt: "Desmos Graph",
+                            title: "Desmos Graph",
+                            data: {
+                                hProperties: {
+                                    className: ["desmos-graph"]
                                 }
                             }
-                            console.log(`Desmos SVG found: ${filename}. Replacing code block.`)
-                            parent.children.splice(index, 1, imageNode)
-                        } catch {
-                            // If file is missing, we leave the code block alone
-                            console.warn(`Desmos SVG not found: ${filename} (Hash: ${hash}).`)
                         }
-                        } catch (e) {
-                            console.error(`Failed to parse/hash desmos block: ${e}`)
-                        }
+                        parent.children.splice(index, 1, imageNode)
+                    } catch (e) {
+                        console.error(`Failed to process desmos graph: ${e}`)
                     }
+                }
+
+                // Close browser after processing all graphs
+                await closeBrowser()
                 },
             ]
         },

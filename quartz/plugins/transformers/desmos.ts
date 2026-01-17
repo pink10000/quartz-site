@@ -245,9 +245,11 @@ async function generateDesmosSVG(
             
             if (eq.hidden) expr.hidden = true
             if (eq.line === false) expr.lines = false
-            if (eq.label !== undefined) {
-                expr.showLabel = true
+            
+            // Handle labels - only add if label is defined and not empty
+            if (eq.label !== undefined && eq.label !== "") {
                 expr.label = eq.label
+                expr.showLabel = true
             }
             
             if (eq.style) {
@@ -318,7 +320,8 @@ async function generateDesmosSVG(
         await page.waitForFunction(() => (window as any).desmosReady === true, { timeout: 10000 })
         
         // Wait for all expressions to be added and rendered (including labels)
-        await page.waitForTimeout(1500)
+        // Labels need extra time to render properly
+        await page.waitForTimeout(2500)
 
         // Get the SVG data using asyncScreenshot
         const svgData: string | undefined = await page.evaluate(async ({ width, height }) => {
@@ -326,11 +329,12 @@ async function generateDesmosSVG(
             if (!calc) return undefined
             return new Promise((resolve) => {
                 calc.asyncScreenshot({
-                    mode: 'stretch',
+                    mode: 'preserveX',  // Changed from 'stretch' to preserve aspect ratio
                     width: width,
                     height: height,
-                    targetPixelRatio: 1,
-                    format: 'svg'
+                    targetPixelRatio: 2,  // Increased for better quality
+                    format: 'svg',
+                    showLabels: true  // Explicitly enable labels
                 }, (data: string) => resolve(data))
             })
         }, { width: fullSettings.width, height: fullSettings.height })

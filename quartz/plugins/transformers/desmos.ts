@@ -256,6 +256,12 @@ function buildDesmosExpression(eq: Equation, idx: number, defaultColor?: Color):
         }
     }
     
+    // Restrictions/bounds handling - format for Desmos LaTeX
+    if (eq.restrictions && eq.restrictions.length > 0) {
+        const formattedRestrictions = eq.restrictions.map(r => `\\left\\{${r}\\right\\}`).join('')
+        expr.latex = `${expr.latex}${formattedRestrictions}`
+    }
+    
     return expr
 }
 

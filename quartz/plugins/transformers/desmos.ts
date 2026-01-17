@@ -332,7 +332,7 @@ async function generateDesmosSVG(
                     mode: 'preserveX',  // Changed from 'stretch' to preserve aspect ratio
                     width: width,
                     height: height,
-                    targetPixelRatio: 2,  // Increased for better quality
+                    targetPixelRatio: 1,
                     format: 'svg',
                     showLabels: true  // Explicitly enable labels
                 }, (data: string) => resolve(data))

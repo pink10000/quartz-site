@@ -318,10 +318,6 @@ async function generateDesmosSVG(
         // Wait for Desmos to be ready
         await page.waitForFunction(() => (window as any).desmosReady === true, { timeout: 10000 })
         
-        // Wait for all expressions to be added and rendered (including labels)
-        // Labels need extra time to render properly
-        await page.waitForTimeout(2500)
-
         // Get the SVG data using asyncScreenshot
         const svgData: string | undefined = await page.evaluate(async ({ width, height }) => {
             const calc = (window as any).calculator

@@ -234,8 +234,9 @@ async function generateDesmosSVG(
         const fullSettings = { ...DEFAULT_GRAPH_SETTINGS, ...settings }
 
         // Build expressions array for Desmos
-        const expressions = equations.map(eq => {
+        const expressions = equations.map((eq, idx) => {
             const expr: any = {
+                id: `expr-${idx}`,
                 latex: eq.equation,
             }
             
@@ -244,7 +245,7 @@ async function generateDesmosSVG(
             
             if (eq.hidden) expr.hidden = true
             if (eq.line === false) expr.lines = false
-            if (eq.label) {
+            if (eq.label !== undefined) {
                 expr.showLabel = true
                 expr.label = eq.label
             }
@@ -316,8 +317,8 @@ async function generateDesmosSVG(
         // Wait for Desmos to be ready
         await page.waitForFunction(() => (window as any).desmosReady === true, { timeout: 10000 })
         
-        // Wait a bit more for rendering
-        await page.waitForTimeout(500)
+        // Wait for all expressions to be added and rendered (including labels)
+        await page.waitForTimeout(1500)
 
         // Get the SVG data using asyncScreenshot
         const svgData: string | undefined = await page.evaluate(async ({ width, height }) => {

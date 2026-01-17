@@ -3,6 +3,7 @@ import { QuartzTransformerPlugin } from "../types"
 import { visit } from "unist-util-visit"
 import { Code } from "mdast"
 import * as fs from "node:fs/promises"
+import { existsSync } from "node:fs"
 import * as path from "node:path"
 import * as crypto from "node:crypto"
 import { chromium, Browser } from "playwright"
@@ -204,9 +205,14 @@ let browserInstance: Browser | null = null
 
 async function getBrowser(): Promise<Browser> {
     if (!browserInstance) {
-        browserInstance = await chromium.launch({ headless: true })
+        const chromiumPath = "/usr/bin/chromium"
+        const executablePath = existsSync(chromiumPath) ? chromiumPath : undefined
+        browserInstance = await chromium.launch({ 
+            headless: true, 
+            executablePath 
+        })
     }
-    return browserInstance
+    return browserInstance!
 }
 
 async function closeBrowser() {
@@ -267,7 +273,7 @@ async function generateDesmosSVG(
 <body>
     <div id="calculator"></div>
     <script>
-        const calculator = Desmos.GraphingCalculator(document.getElementById('calculator'), {
+        window.calculator = Desmos.GraphingCalculator(document.getElementById('calculator'), {
             expressions: false,
             settingsMenu: false,
             zoomButtons: false,
@@ -277,14 +283,14 @@ async function generateDesmosSVG(
         });
 
         // Set graph bounds and settings
-        calculator.setMathBounds({
+        window.calculator.setMathBounds({
             left: ${fullSettings.left},
             right: ${fullSettings.right},
             bottom: ${fullSettings.bottom},
             top: ${fullSettings.top}
         });
 
-        calculator.updateSettings({
+        window.calculator.updateSettings({
             degreeMode: ${fullSettings.degreeMode === DegreeMode.Degrees},
             showGrid: ${fullSettings.grid},
             showXAxis: ${!fullSettings.hideAxisNumbers},
@@ -296,7 +302,7 @@ async function generateDesmosSVG(
 
         // Add equations
         const expressions = ${JSON.stringify(expressions)};
-        expressions.forEach(expr => calculator.setExpression(expr));
+        expressions.forEach(expr => window.calculator.setExpression(expr));
 
         // Signal ready
         window.desmosReady = true;
@@ -314,17 +320,23 @@ async function generateDesmosSVG(
         await page.waitForTimeout(500)
 
         // Get the SVG data using asyncScreenshot
-        const svgData: string = await page.evaluate(async ({ width, height }) => {
-            const calc = (window as any).Desmos.GraphingCalculator(document.getElementById('calculator'))
-            const data: string = await calc.asyncScreenshot({
-                mode: 'stretch',
-                width: width,
-                height: height,
-                targetPixelRatio: 1,
-                format: 'svg'
+        const svgData: string | undefined = await page.evaluate(async ({ width, height }) => {
+            const calc = (window as any).calculator
+            if (!calc) return undefined
+            return new Promise((resolve) => {
+                calc.asyncScreenshot({
+                    mode: 'stretch',
+                    width: width,
+                    height: height,
+                    targetPixelRatio: 1,
+                    format: 'svg'
+                }, (data: string) => resolve(data))
             })
-            return data
         }, { width: fullSettings.width, height: fullSettings.height })
+
+        if (!svgData) {
+            throw new Error("Failed to capture Desmos screenshot: svgData is undefined")
+        }
 
         return svgData
     } finally {

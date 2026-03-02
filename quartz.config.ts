@@ -99,7 +99,7 @@ const config: QuartzConfig = {
           "\\Exp": "\\text{Exp}",
           "\\P": "\\mathbb{P}", // From \renewcommand{\P}
           "\\Cov": "\\text{Cov}",
-          "\\E": "\\mathbb{E}\\left\\[#1\\right\\'",
+          "\\E": "\\mathbb{E}\\left\[#1\\right\]'",
         
           // Linear Algebra
           "\\trace": "\\text{trace}",

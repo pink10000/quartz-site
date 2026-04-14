@@ -129,7 +129,17 @@ const config: QuartzConfig = {
           "\\notexists": "\\nexists",
           "\\vvf": "\\textbf{f}",
           "\\rrarrow": "\\rightrightarrows",
-          "\\ceil": "\\left\\lceil #1 \\right\\rceil"
+          "\\ceil": "\\left\\lceil #1 \\right\\rceil",
+
+          // Physics
+          "\\dimM": "\\mathsfup{M}",
+          "\\dimL": "\\mathsfup{L}",
+          "\\dimT": "\\mathsfup{T}",
+          "\\dimTheta": "\\mathsfup{\Theta}",
+          "\\dimI": "\\mathsfup{I}",
+          "\\dimC": "\\mathsfup{C}",
+          "\\dimN": "\\mathsfup{N}",
+          "\\dimB": "\\mathsfup{B}"
         },
       }),
     ],

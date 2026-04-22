@@ -23,17 +23,17 @@ figure.tikz {
     margin: 1rem 0;
   }
 
-  // Style the figcaption (source code button) - positioned at top right
+  // Style the figcaption (source code button) - positioned at bottom right
   figcaption {
     position: absolute;
-    top: 0.5rem;
+    bottom: 0.5rem;
     right: 0.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
     color: var(--gray);
-    z-index: 10;
+    z-index: 0;
 
     em {
       display: none; // Hide the "source code" text label

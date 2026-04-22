@@ -9,18 +9,17 @@ figure.tikz {
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  zoom: 1.25;
 
   // Hide the mathml element (used only for storing source code)
   .tikz-mathml {
     display: none;
   }
 
-  // Center the SVG diagram - make it bigger
+  // Center the SVG diagram
   svg {
     max-width: 100%;
     height: auto;
-    transform: scale(1.5);
-    transform-origin: center;
     margin: 1rem 0;
   }
 

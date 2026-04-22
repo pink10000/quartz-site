@@ -130,7 +130,7 @@ const config: QuartzConfig = {
           "\\vvf": "\\textbf{f}",
           "\\rrarrow": "\\rightrightarrows",
           "\\ceil": "\\left\\lceil #1 \\right\\rceil",
-          "\\llbracket": "[\![", "\\rrbracket": "]\!]",
+          "\\llbracket": "[\\![", "\\rrbracket": "]\\!]",
 
           // Physics
           "\\dimM": "\\mathsfup{M}",

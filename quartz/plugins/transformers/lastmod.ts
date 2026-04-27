@@ -45,21 +45,7 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
     markdownPlugins(ctx) {
       return [
         () => {
-          let repo: Repository | undefined = undefined
-          let repositoryWorkdir: string
-          if (opts.priority.includes("git")) {
-            try {
-              repo = Repository.discover(ctx.argv.directory)
-              repositoryWorkdir = repo.workdir() ?? ctx.argv.directory
-            } catch (e) {
-              console.log(
-                styleText(
-                  "yellow",
-                  `\nWarning: couldn't find git repository for ${ctx.argv.directory}`,
-                ),
-              )
-            }
-          }
+          const repoCache = new Map<string, Repository>()
 
           return async (_tree, file) => {
             let created: MaybeDate = undefined
@@ -77,17 +63,31 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
                 created ||= file.data.frontmatter.created as MaybeDate
                 modified ||= file.data.frontmatter.modified as MaybeDate
                 published ||= file.data.frontmatter.published as MaybeDate
-              } else if (source === "git" && repo) {
-                try {
-                  const relativePath = path.relative(repositoryWorkdir, fullFp)
-                  modified ||= await repo.getFileLatestModifiedDateAsync(relativePath)
-                } catch {
-                  console.log(
-                    styleText(
-                      "yellow",
-                      `\nWarning: ${file.data.filePath!} isn't yet tracked by git, dates will be inaccurate`,
-                    ),
-                  )
+              } else if (source === "git") {
+                const dir = path.dirname(fullFp)
+                let currentRepo = repoCache.get(dir)
+                if (!currentRepo) {
+                  try {
+                    currentRepo = Repository.discover(dir)
+                    repoCache.set(dir, currentRepo)
+                  } catch {
+                    // ignore
+                  }
+                }
+
+                if (currentRepo) {
+                  try {
+                    const workdir = currentRepo.workdir() ?? ctx.argv.directory
+                    const relativePath = path.relative(workdir, fullFp)
+                    modified ||= await currentRepo.getFileLatestModifiedDateAsync(relativePath)
+                  } catch {
+                    console.log(
+                      styleText(
+                        "yellow",
+                        `\nWarning: ${file.data.filePath!} isn't yet tracked by git, dates will be inaccurate`,
+                      ),
+                    )
+                  }
                 }
               }
             }

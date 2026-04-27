@@ -344,6 +344,11 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
         markdownPlugins(ctx) {
             return [
                 () => async (tree, file) => {
+                    if (process.env.SKIP_DESMOS) {
+                        console.log("\nSkipping Desmos SVG generation (SKIP_DESMOS is set)")
+                        return
+                    }
+
                     const nodesToProcess: { node: Code; index: number; parent: any }[] = []
                     
                     // Collect all desmos-graph nodes

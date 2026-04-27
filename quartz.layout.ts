@@ -6,6 +6,7 @@ export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [
     Component.PaneToggle(),
+    Component.Darkmode(),
     Component.PageTitle(),
     Component.Flex({
       components: [
@@ -13,7 +14,6 @@ export const sharedPageComponents: SharedLayout = {
           Component: Component.Search(),
           grow: true,
         },
-        { Component: Component.Darkmode() },
       ],
     }),
   ],

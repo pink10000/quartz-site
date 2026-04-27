@@ -37,6 +37,12 @@ header {
     display: block;
     margin-left: auto;
     margin-right: auto;
+    border-radius: 5px;
+}
+
+/* Invert Desmos graphs in dark mode */
+:root[saved-theme="dark"] .desmos-graph {
+    filter: invert(0.9) hue-rotate(180deg);
 }
 
 /* Pane Toggle Styles */

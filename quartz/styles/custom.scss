@@ -17,3 +17,26 @@ div.mermaid {
     margin-right: auto;
 }
 
+/* Center code blocks */
+pre {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+pre > code {
+  width: fit-content;
+  text-align: left; /* Keep the ASCII lines aligned with each other */
+}
+
+figure[data-rehype-pretty-code-figure] {
+  width: 100%;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+

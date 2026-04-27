@@ -224,7 +224,7 @@ a {
       gap: 1.2rem;
       top: 0;
       box-sizing: border-box;
-      padding: $topSpacing 2rem 2rem 2rem;
+      padding: $topSpacing $layoutPadding * 2 $layoutPadding * 2 $layoutPadding * 2;
       display: flex;
       height: 100vh;
       position: sticky;
@@ -236,7 +236,7 @@ a {
       grid-column: 1;
       grid-row: 1 / 4;
       justify-self: end;
-      width: 320px;
+      width: $sidePanelWidth;
       flex-direction: column;
 
       @media all and not ($desktop) {
@@ -249,7 +249,7 @@ a {
         z-index: 2500;
         display: none;
         flex-direction: column;
-        padding: 4rem 1rem 1rem 1rem;
+        padding: $topSpacing + 2rem $layoutPadding $layoutPadding $layoutPadding;
         box-shadow: 2px 0 10px rgba(0,0,0,0.2);
         overflow-y: auto;
         overscroll-behavior: contain;
@@ -261,7 +261,7 @@ a {
       grid-column: 3;
       grid-row: 1 / 4;
       justify-self: start;
-      width: 320px;
+      width: $sidePanelWidth;
       flex-direction: column;
 
       @media all and not ($desktop) {
@@ -296,7 +296,7 @@ a {
           top: 0;
           background-color: var(--light);
           z-index: 3000;
-          padding: 0.5rem 1rem;
+          padding: 0.5rem $layoutPadding;
           border-bottom: 1px solid var(--lightgray);
           display: flex;
           align-items: center;
@@ -320,7 +320,7 @@ a {
         }
 
         & .popover-hint {
-          padding: 0 1rem;
+          padding: 0 $layoutPadding;
         }
       }
     }
@@ -335,7 +335,7 @@ a {
 
       @media all and not ($desktop) {
         width: 100%;
-        padding: 0 1rem;
+        padding: 0 $layoutPadding;
         box-sizing: border-box;
       }
     }
@@ -350,7 +350,7 @@ a {
 
       @media all and not ($desktop) {
         width: 100%;
-        padding: 1rem;
+        padding: $layoutPadding;
         box-sizing: border-box;
       }
     }

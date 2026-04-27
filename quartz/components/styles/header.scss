@@ -1,0 +1,20 @@
+@use "../../styles/variables.scss" as *;
+
+header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0 0 0.5rem 0;
+  gap: 1.5rem;
+  width: 100%;
+
+  & h1 {
+    margin: 0;
+    flex: auto;
+  }
+
+  & .page-title {
+    flex: 0 0 auto;
+    margin-right: 2rem;
+  }
+}

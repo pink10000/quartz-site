@@ -133,14 +133,14 @@ const config: QuartzConfig = {
           "\\llbracket": "[\\![", "\\rrbracket": "]\\!]",
 
           // Physics
-          "\\dimM": "\\mathsfup{M}",
-          "\\dimL": "\\mathsfup{L}",
-          "\\dimT": "\\mathsfup{T}",
-          "\\dimTheta": "\\mathsfup{\Theta}",
-          "\\dimI": "\\mathsfup{I}",
-          "\\dimC": "\\mathsfup{C}",
-          "\\dimN": "\\mathsfup{N}",
-          "\\dimB": "\\mathsfup{B}"
+          "\\dimM": "\\mathsf{M}",
+          "\\dimL": "\\mathsf{L}",
+          "\\dimT": "\\mathsf{T}",
+          "\\dimTheta": "\\mathsf{\Theta}",
+          "\\dimI": "\\mathsf{I}",
+          "\\dimC": "\\mathsf{C}",
+          "\\dimN": "\\mathsf{N}",
+          "\\dimB": "\\mathsf{B}"
         },
       }),
     ],

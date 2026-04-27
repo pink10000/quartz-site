@@ -401,7 +401,6 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
                             const filename = `${safeBasename}-desmos${graphCount}.svg`
                             const outputFilePath = path.join(outputDir, filename)
                             
-                            console.log(`\nGenerating Desmos SVG: ${filename}`)
                             const svgData = await generateDesmosSVG(equations, settings)
                             await fs.writeFile(outputFilePath, svgData, 'utf-8')
                             console.log(`\nDesmos SVG generated: ${filename}`)

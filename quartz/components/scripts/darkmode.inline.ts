@@ -25,10 +25,28 @@ document.addEventListener("nav", () => {
     emitThemeChangeEvent(newTheme)
   }
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "]" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const target = e.target as HTMLElement
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.isContentEditable
+      ) {
+        return
+      }
+      switchTheme()
+    }
+  }
+
   for (const darkmodeButton of document.getElementsByClassName("darkmode")) {
     darkmodeButton.addEventListener("click", switchTheme)
     window.addCleanup(() => darkmodeButton.removeEventListener("click", switchTheme))
   }
+
+  // Hotkey listener
+  document.addEventListener("keydown", handleKeyDown)
+  window.addCleanup(() => document.removeEventListener("keydown", handleKeyDown))
 
   // Listen for changes in prefers-color-scheme
   const colorSchemeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")

@@ -12,7 +12,7 @@ div.mermaid {
 
 /* Compact Header Area */
 header {
-  margin: 1rem 0 0.5rem 0 !important;
+  margin: 0 0 0.5rem 0;
 }
 
 .breadcrumb-container {
@@ -72,81 +72,9 @@ html {
   scrollbar-gutter: stable;
 }
 
-/* Affix content width in both states for zero movement */
-@media all and (min-width: 1200px) {
-  .page {
-    max-width: none !important;
-  }
-
-  #quartz-body {
-    column-gap: 40px !important;
-    grid-template-columns: 1fr 800px 1fr !important;
-    width: 100% !important;
-    justify-content: center !important;
-  }
-
-  .sidebar.left {
-    grid-column: 1 !important;
-    justify-self: end !important;
-    width: 320px !important;
-  }
-
-  .sidebar.right {
-    grid-column: 3 !important;
-    justify-self: start !important;
-    width: 320px !important;
-  }
-
-  .center, .page-header, footer, header, article {
-    grid-column: 2 !important;
-    width: 800px !important;
-    max-width: 800px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-
-  body.left-pane-collapsed {
-    & .sidebar {
-      width: 0 !important;
-      opacity: 0;
-      padding: 0 !important;
-      margin: 0 !important;
-      pointer-events: none;
-      visibility: hidden;
-    }
-  }
-}
-
-/* Left & Right Pane Toggle (Responsive Fix) */
-body.left-pane-collapsed {
-  @media all and (max-width: 1199px) {
-    & #quartz-body {
-      grid-template-columns: 1fr !important;
-      grid-template-areas: "grid-header" "grid-center" "grid-footer" !important;
-      justify-items: center !important;
-    }
-
-    & .sidebar.left, & .sidebar.right {
-      display: none !important;
-    }
-
-    & .center, & .page-header, & footer, & article, header {
-      width: 100% !important;
-      max-width: 800px !important;
-      margin-left: auto !important;
-      margin-right: auto !important;
-    }
-  }
-}
-
-/* Header Flex Fixes */
-header {
-  width: 100%;
-}
-
 .page-title {
   flex: 0 0 auto;
-  margin-right: 2rem !important;
+  margin-right: 2rem;
 }
 
 /* Center code blocks */
@@ -170,8 +98,8 @@ pre > code.mermaid {
 
 figure[data-rehype-pretty-code-figure] {
   width: 100%;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -9,10 +9,13 @@ export const sharedPageComponents: SharedLayout = {
     Component.Darkmode(),
     Component.PageTitle(),
     Component.Flex({
+      gap: "0.5rem",
+      grow: true,
       components: [
         {
           Component: Component.Search(),
           grow: true,
+          justify: "end",
         },
       ],
     }),

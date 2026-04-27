@@ -4,7 +4,9 @@ function togglePane() {
 }
 
 function restoreState() {
-  const isCollapsed = localStorage.getItem("left-pane-collapsed") === "true"
+  const savedState = localStorage.getItem("left-pane-collapsed")
+  const isMobile = window.matchMedia("(max-width: 1199px)").matches
+  const isCollapsed = savedState === null ? isMobile : savedState === "true"
   if (isCollapsed) {
     document.body.classList.add("left-pane-collapsed")
   } else {
@@ -26,6 +28,19 @@ function handleKeyDown(e: KeyboardEvent) {
   }
 }
 
+function handleClickOutside(e: MouseEvent) {
+  const isMobile = window.matchMedia("(max-width: 1199px)").matches
+  if (!isMobile) return
+
+  const sidebar = document.querySelector(".sidebar.left")
+  const paneToggle = document.getElementById("pane-toggle")
+  const isCollapsed = document.body.classList.contains("left-pane-collapsed")
+
+  if (!isCollapsed && sidebar && !sidebar.contains(e.target as Node) && paneToggle && !paneToggle.contains(e.target as Node)) {
+    togglePane()
+  }
+}
+
 // Immediate restoration to prevent flash
 restoreState()
 
@@ -37,6 +52,10 @@ document.addEventListener("nav", () => {
   // Hotkey listener
   document.removeEventListener("keydown", handleKeyDown)
   document.addEventListener("keydown", handleKeyDown)
+
+  // Outside click listener
+  document.removeEventListener("click", handleClickOutside)
+  document.addEventListener("click", handleClickOutside)
 
   // Restore state on SPA navigation
   restoreState()

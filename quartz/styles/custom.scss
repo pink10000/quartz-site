@@ -10,6 +10,28 @@ div.mermaid {
 
 // put your custom CSS here!
 
+/* Compact Header Area */
+header {
+  margin: 1rem 0 0.5rem 0 !important;
+}
+
+.breadcrumb-container {
+  margin-top: 0.25rem !important;
+}
+
+.article-title {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.content-meta {
+  margin-top: 0 !important;
+}
+
+.tags {
+  margin: 0.5rem 0 !important;
+}
+
 /* Horizontally center the graph in the page content */
 .desmos-graph {
     display: block;

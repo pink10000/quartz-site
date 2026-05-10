@@ -80,6 +80,9 @@ const config: QuartzConfig = {
       Plugin.Latex({ 
         // for some reason the macros only work when this is katex and not mathjax
         renderEngine: "katex", 
+        katexOptions: {
+          trust: true,
+        },
         customMacros: {
           // Sets
           "\\R": "\\mathbb{R}",
@@ -121,6 +124,9 @@ const config: QuartzConfig = {
 
           // Topology
           "\\Cl": "\\text{Cl}",
+
+          // xcancel macro
+          "\\xcancel": "\\cancel{\\bcancel{#1}}",
         
           // Calculus
           "\\del": "\\partial",
@@ -165,7 +171,7 @@ const config: QuartzConfig = {
           "\\bo": "\\mathbf{o}",
           "\\bp": "\\mathbf{p}",
           "\\bq": "\\mathbf{q}",
-          "\\br": "\\mathbf{r}",
+          "\\br": "\\mathbf{r}",  
           "\\bs": "\\mathbf{s}",
           "\\bt": "\\mathbf{t}",
           "\\bu": "\\mathbf{u}",

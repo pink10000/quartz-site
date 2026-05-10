@@ -131,6 +131,8 @@ const config: QuartzConfig = {
           "\\rrarrow": "\\rightrightarrows",
           "\\ceil": "\\left\\lceil #1 \\right\\rceil",
           "\\llbracket": "[\\![", "\\rrbracket": "]\\!]",
+          "\\argmax": "\\operatorname*{argmax}",
+          "\\argmin": "\\operatorname*{argmin}",
 
           // Physics
           "\\dimM": "\\mathsf{M}",

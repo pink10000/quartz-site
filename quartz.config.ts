@@ -130,6 +130,7 @@ const config: QuartzConfig = {
         
           // Calculus
           "\\del": "\\partial",
+          "\\oiint" :"\\subset\\!\\supset} \\mathllap{\\iint}}",
         
           // Misc
           "\\notexists": "\\nexists",

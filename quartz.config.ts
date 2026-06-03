@@ -218,6 +218,10 @@ const config: QuartzConfig = {
       Plugin.ContentPage(),
       Plugin.FolderPage({
         sort: (a, b) => {
+            if (a.dates && b.dates) {
+              return b.dates.modified.getTime() - a.dates.modified.getTime()
+            }
+
             const orderA = a.frontmatter?.tags?.find((tag: string) => tag.startsWith("order:"))?.split(":")[1] as number | undefined ?? Infinity;
             const orderB = b.frontmatter?.tags?.find((tag: string) => tag.startsWith("order:"))?.split(":")[1] as number | undefined ?? Infinity;
             

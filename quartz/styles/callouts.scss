@@ -5,17 +5,37 @@
   border: 1px solid var(--border);
   background-color: var(--bg);
   border-radius: 5px;
-  padding: 0 1rem;
+  padding: 0 1rem 1rem;
   overflow-y: hidden;
   box-sizing: border-box;
+
+  &.is-collapsed {
+    padding-bottom: 0;
+  }
 
   & > .callout-content {
     display: grid;
     transition: grid-template-rows 0.1s cubic-bezier(0.02, 0.01, 0.47, 1);
     overflow: hidden;
 
+    & > * {
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+
     & > :first-child {
       margin-top: 0;
+    }
+
+    & > :last-child {
+      margin-bottom: 0;
+    }
+
+    ul,
+    ol {
+      li {
+        margin: 0.1rem 0;
+      }
     }
   }
 

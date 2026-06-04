@@ -6,7 +6,6 @@ export {
   isRelativeURL,
   isAbsoluteURL,
   getFullSlug,
-  slugifyFilePath,
   simplifySlug,
   joinSegments,
   endsWith,
@@ -18,11 +17,17 @@ export {
   pathToRoot,
   resolveRelative,
   splitAnchor,
-  slugTag,
   transformInternalLink,
   transformLink,
   normalizeHastElement,
 } from "@quartz-community/utils"
+
+export const slugTag = (tag: string): string => {
+  return tag
+    .split("/")
+    .map((tagSegment) => _sluggifyV4(tagSegment))
+    .join("/")
+}
 
 export type {
   FilePath,
@@ -31,6 +36,48 @@ export type {
   RelativeURL,
   TransformOptions,
 } from "@quartz-community/utils"
+
+import type { FilePath, FullSlug } from "@quartz-community/utils"
+import { stripSlashes, getFileExtension, endsWith } from "@quartz-community/utils"
+
+/**
+ * v4-compatible slugifyFilePath: preserves case (no .toLowerCase()) and
+ * does NOT apply the v5 "folder-note" convention (folder/folder.md → folder/index).
+ * This keeps output URLs identical to what the v4 site produced.
+ */
+function _sluggifyV4(s: string): string {
+  return s
+    .split("/")
+    .map((segment) =>
+      segment
+        .replace(/\s/g, "-")
+        .replace(/&/g, "-and-")
+        .replace(/%/g, "-percent")
+        .replace(/\?/g, "")
+        .replace(/#/g, ""),
+    )
+    .join("/")
+    .replace(/\/$/, "")
+}
+
+export function slugifyFilePath(fp: FilePath, excludeExt?: boolean): FullSlug {
+  fp = stripSlashes(fp) as FilePath
+  const ext = getFileExtension(fp)
+  const withoutFileExt = fp.replace(new RegExp((ext ?? "") + "$"), "")
+  const finalExt = excludeExt || [".md", ".html", undefined].includes(ext) ? "" : ext
+
+  let slug = _sluggifyV4(withoutFileExt)
+
+  // treat _index as index (Hugo compatibility)
+  if (endsWith(slug, "_index")) {
+    slug = slug.replace(/_index$/, "index")
+  }
+
+  // NOTE: v5 adds a "folder-note" rewrite here (folder/folder.md → folder/index).
+  // We intentionally skip it to preserve v4 URL structure.
+
+  return (slug + (finalExt ?? "")) as FullSlug
+}
 
 // --- v5-specific exports below ---
 

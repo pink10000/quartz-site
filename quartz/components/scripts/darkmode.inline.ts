@@ -13,16 +13,28 @@ document.addEventListener("nav", () => {
   const switchTheme = () => {
     const newTheme =
       document.documentElement.getAttribute("saved-theme") === "dark" ? "light" : "dark"
-    document.documentElement.setAttribute("saved-theme", newTheme)
-    localStorage.setItem("theme", newTheme)
-    emitThemeChangeEvent(newTheme)
+
+    // @ts-ignore
+    if (!document.startViewTransition) {
+      applyTheme(newTheme)
+      return
+    }
+
+    // @ts-ignore
+    document.startViewTransition(() => {
+      applyTheme(newTheme)
+    })
+  }
+
+  const applyTheme = (theme: string) => {
+    document.documentElement.setAttribute("saved-theme", theme)
+    localStorage.setItem("theme", theme)
+    emitThemeChangeEvent(theme as "light" | "dark")
   }
 
   const themeChange = (e: MediaQueryListEvent) => {
     const newTheme = e.matches ? "dark" : "light"
-    document.documentElement.setAttribute("saved-theme", newTheme)
-    localStorage.setItem("theme", newTheme)
-    emitThemeChangeEvent(newTheme)
+    applyTheme(newTheme)
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {

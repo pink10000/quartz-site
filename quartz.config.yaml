@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: "kyle's notes"
+  pageTitle: kyle's notes
   pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true
@@ -89,109 +89,109 @@ plugins:
       katexOptions:
         trust: true
       customMacros:
-        '\R': '\mathbb{R}'
-        '\N': '\mathbb{N}'
-        '\Z': '\mathbb{Z}'
-        '\C': '\mathbb{C}'
-        '\Q': '\mathbb{Q}'
-        '\RQ': '\R\backslash\Q'
-        '\cA': '\mathcal{A}'
-        '\sR': '\mathscr{R}'
-        '\var': '\text{Var}'
-        '\Binom': '\text{Binom}'
-        '\bias': '\text{Bias}'
-        '\pois': '\text{Pois}'
-        '\Exp': '\text{Exp}'
-        '\P': '\mathbb{P}'
-        '\Cov': '\text{Cov}'
-        '\E': '\mathbb{E}\left[#1\right]'
-        '\trace': '\text{trace}'
-        '\ker': '\text{Ker }'
-        '\kerphi': '\text{Ker }\varphi'
-        '\id': '\text{Id}'
-        '\GL': '\text{GL}'
-        '\SL': '\text{SL}'
-        '\Re': '\text{Re}'
-        '\Im': '\text{Im}'
-        '\diam': '\text{diam}'
-        '\vepsi': '\varepsilon'
-        '\ovl': '\overline{#1}'
-        '\unl': '\underline{#1}'
-        '\Cl': '\text{Cl}'
-        '\xcancel': '\cancel{\bcancel{#1}}'
-        '\del': '\partial'
-        '\oiint': '\subset\!\supset} \mathllap{\iint}}'
-        '\notexists': '\nexists'
-        '\vvf': '\textbf{f}'
-        '\rrarrow': '\rightrightarrows'
-        '\ceil': '\left\lceil #1 \right\rceil'
-        '\llbracket': '[\!['
-        '\rrbracket': ']\!]'
-        '\argmax': '\operatorname*{argmax}'
-        '\argmin': '\operatorname*{argmin}'
-        '\dimM': '\mathsf{M}'
-        '\dimL': '\mathsf{L}'
-        '\dimT': '\mathsf{T}'
-        '\dimTheta': '\mathsf{\Theta}'
-        '\dimI': '\mathsf{I}'
-        '\dimC': '\mathsf{C}'
-        '\dimN': '\mathsf{N}'
-        '\dimB': '\mathsf{B}'
-        '\bzero': '\mathbf{0}'
-        '\SE': '\operatorname{SE}'
-        '\SO': '\operatorname{SO}'
-        '\ba': '\mathbf{a}'
-        '\bb': '\mathbf{b}'
-        '\bc': '\mathbf{c}'
-        '\bd': '\mathbf{d}'
-        '\be': '\mathbf{e}'
-        '\bf': '\mathbf{f}'
-        '\bg': '\mathbf{g}'
-        '\bh': '\mathbf{h}'
-        '\bi': '\mathbf{i}'
-        '\bj': '\mathbf{j}'
-        '\bk': '\mathbf{k}'
-        '\bl': '\mathbf{l}'
-        '\bm': '\mathbf{m}'
-        '\bn': '\mathbf{n}'
-        '\bo': '\mathbf{o}'
-        '\bp': '\mathbf{p}'
-        '\bq': '\mathbf{q}'
-        '\br': '\mathbf{r}'
-        '\bs': '\mathbf{s}'
-        '\bt': '\mathbf{t}'
-        '\bu': '\mathbf{u}'
-        '\bv': '\mathbf{v}'
-        '\bw': '\mathbf{w}'
-        '\bx': '\mathbf{x}'
-        '\by': '\mathbf{y}'
-        '\bz': '\mathbf{z}'
-        '\bA': '\mathbf{A}'
-        '\bB': '\mathbf{B}'
-        '\bC': '\mathbf{C}'
-        '\bD': '\mathbf{D}'
-        '\bE': '\mathbf{E}'
-        '\bF': '\mathbf{F}'
-        '\bG': '\mathbf{G}'
-        '\bH': '\mathbf{H}'
-        '\bI': '\mathbf{I}'
-        '\bJ': '\mathbf{J}'
-        '\bK': '\mathbf{K}'
-        '\bL': '\mathbf{L}'
-        '\bM': '\mathbf{M}'
-        '\bN': '\mathbf{N}'
-        '\bO': '\mathbf{O}'
-        '\bP': '\mathbf{P}'
-        '\bQ': '\mathbf{Q}'
-        '\bR': '\mathbf{R}'
-        '\bS': '\mathbf{S}'
-        '\bT': '\mathbf{T}'
-        '\bU': '\mathbf{U}'
-        '\bV': '\mathbf{V}'
-        '\bW': '\mathbf{W}'
-        '\bX': '\mathbf{X}'
-        '\bY': '\mathbf{Y}'
-        '\bZ': '\mathbf{Z}'
+        \R: \mathbb{R}
+        \N: \mathbb{N}
+        \Z: \mathbb{Z}
+        \C: \mathbb{C}
+        \Q: \mathbb{Q}
+        \RQ: \R\backslash\Q
+        \cA: \mathcal{A}
+        \sR: \mathscr{R}
+        \var: \text{Var}
+        \Binom: \text{Binom}
+        \bias: \text{Bias}
+        \pois: \text{Pois}
+        \Exp: \text{Exp}
+        \P: \mathbb{P}
+        \Cov: \text{Cov}
+        \E: \mathbb{E}\left[#1\right]
+        \trace: \text{trace}
+        \ker: \text{Ker }
+        \kerphi: \text{Ker }\varphi
+        \id: \text{Id}
+        \GL: \text{GL}
+        \SL: \text{SL}
+        \Re: \text{Re}
+        \Im: \text{Im}
+        \diam: \text{diam}
+        \vepsi: \varepsilon
+        \ovl: \overline{#1}
+        \unl: \underline{#1}
+        \Cl: \text{Cl}
+        \xcancel: \cancel{\bcancel{#1}}
+        \del: \partial
+        \oiint: \subset\!\supset} \mathllap{\iint}}
+        \notexists: \nexists
+        \vvf: \textbf{f}
+        \rrarrow: \rightrightarrows
+        \ceil: "\\left\\lceil #1 \\right\\rceil"
+        \llbracket: "[\\!["
+        \rrbracket: "]\\!]"
+        \argmax: \operatorname*{argmax}
+        \argmin: \operatorname*{argmin}
+        \dimM: \mathsf{M}
+        \dimL: \mathsf{L}
+        \dimT: \mathsf{T}
+        \dimTheta: \mathsf{\Theta}
+        \dimI: \mathsf{I}
+        \dimC: \mathsf{C}
+        \dimN: \mathsf{N}
+        \dimB: \mathsf{B}
+        \bzero: \mathbf{0}
+        \SE: \operatorname{SE}
+        \SO: \operatorname{SO}
+        \ba: \mathbf{a}
+        \bb: \mathbf{b}
+        \bc: \mathbf{c}
+        \bd: \mathbf{d}
+        \be: \mathbf{e}
+        \bf: \mathbf{f}
+        \bg: \mathbf{g}
+        \bh: \mathbf{h}
+        \bi: \mathbf{i}
+        \bj: \mathbf{j}
+        \bk: \mathbf{k}
+        \bl: \mathbf{l}
+        \bm: \mathbf{m}
+        \bn: \mathbf{n}
+        \bo: \mathbf{o}
+        \bp: \mathbf{p}
+        \bq: \mathbf{q}
+        \br: \mathbf{r}
+        \bs: \mathbf{s}
+        \bt: \mathbf{t}
+        \bu: \mathbf{u}
+        \bv: \mathbf{v}
+        \bw: \mathbf{w}
+        \bx: \mathbf{x}
+        \by: \mathbf{y}
+        \bz: \mathbf{z}
+        \bA: \mathbf{A}
+        \bB: \mathbf{B}
+        \bC: \mathbf{C}
+        \bD: \mathbf{D}
+        \bE: \mathbf{E}
+        \bF: \mathbf{F}
+        \bG: \mathbf{G}
+        \bH: \mathbf{H}
+        \bI: \mathbf{I}
+        \bJ: \mathbf{J}
+        \bK: \mathbf{K}
+        \bL: \mathbf{L}
+        \bM: \mathbf{M}
+        \bN: \mathbf{N}
+        \bO: \mathbf{O}
+        \bP: \mathbf{P}
+        \bQ: \mathbf{Q}
+        \bR: \mathbf{R}
+        \bS: \mathbf{S}
+        \bT: \mathbf{T}
+        \bU: \mathbf{U}
+        \bV: \mathbf{V}
+        \bW: \mathbf{W}
+        \bX: \mathbf{X}
+        \bY: \mathbf{Y}
+        \bZ: \mathbf{Z}
     order: 80
   - source: github:quartz-community/citations
     enabled: false
@@ -344,20 +344,19 @@ plugins:
     enabled: false
     options:
       theme: default
-  - source: ./custom-plugins/created-modified-date
+  - source: github:pink10000/created-modified-date
     enabled: true
     options:
       priority:
         - frontmatter
         - git
         - filesystem
-      defaultDateType: modified
     order: 10
-  - source: ./custom-plugins/desmos
+  - source: github:pink10000/desmos-render
     enabled: true
     options: {}
     order: 80
-  - source: ./custom-plugins/tikz
+  - source: github:pink10000/tikz-render
     enabled: true
     options: {}
     order: 80

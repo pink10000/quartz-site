@@ -103,6 +103,12 @@
       "commit": "local",
       "installedAt": "2026-06-04T06:41:50.128Z"
     },
+    "desmos-render": {
+      "source": "github:pink10000/desmos-render",
+      "resolved": "https://github.com/pink10000/desmos-render.git",
+      "commit": "07a86fe98b6e46d8498bdbe02028d47931aa8002",
+      "installedAt": "2026-06-04T19:19:09.381Z"
+    },
     "explorer": {
       "source": "github:quartz-community/explorer",
       "resolved": "https://github.com/quartz-community/explorer.git",
@@ -251,6 +257,12 @@
       "resolved": "/home/py/Documents/quartz-site/custom-plugins/tikz",
       "commit": "local",
       "installedAt": "2026-06-04T06:41:50.614Z"
+    },
+    "tikz-render": {
+      "source": "github:pink10000/tikz-render",
+      "resolved": "https://github.com/pink10000/tikz-render.git",
+      "commit": "7d8cec7ffab4cadd7df702722c5cf8a8ed6f25eb",
+      "installedAt": "2026-06-04T19:20:28.267Z"
     },
     "unlisted-pages": {
       "source": "github:quartz-community/unlisted-pages",

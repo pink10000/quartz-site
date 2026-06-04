@@ -134,7 +134,7 @@ a {
 }
 
 .desktop-only {
-  display: contents;
+  display: initial;
   &.flex-component {
     display: flex;
   }
@@ -155,12 +155,12 @@ a {
     &.flex-component {
       display: flex;
     }
-    display: contents;
+    display: initial;
   }
 }
 
 .page {
-  max-width: calc(#{map.get($breakpoints, desktop)} + 300px);
+  width: 100%;
   margin: 0 auto;
   & article {
     & > h1 {
@@ -190,11 +190,12 @@ a {
 
   & > #quartz-body {
     display: grid;
-    grid-template-columns: #{map.get($desktopGrid, templateColumns)};
+    grid-template-columns: 1fr 800px 1fr;
     grid-template-rows: #{map.get($desktopGrid, templateRows)};
-    column-gap: #{map.get($desktopGrid, columnGap)};
+    column-gap: 40px;
     row-gap: #{map.get($desktopGrid, rowGap)};
-    grid-template-areas: #{map.get($desktopGrid, templateAreas)};
+    width: 100%;
+    justify-content: center;
 
     @media all and ($tablet) {
       grid-template-columns: #{map.get($tabletGrid, templateColumns)};
@@ -203,151 +204,240 @@ a {
       row-gap: #{map.get($tabletGrid, rowGap)};
       grid-template-areas: #{map.get($tabletGrid, templateAreas)};
     }
-    @media all and ($mobile) {
-      grid-template-columns: #{map.get($mobileGrid, templateColumns)};
-      grid-template-rows: #{map.get($mobileGrid, templateRows)};
-      column-gap: #{map.get($mobileGrid, columnGap)};
-      row-gap: #{map.get($mobileGrid, rowGap)};
-      grid-template-areas: #{map.get($mobileGrid, templateAreas)};
+    @media all and not ($desktop) {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin: 0;
+      padding: 0;
     }
 
     @media all and not ($desktop) {
       padding: 0 1rem;
     }
-    @media all and ($mobile) {
+    @media all and not ($desktop) {
       margin: 0 auto;
+      padding: 0;
     }
 
     & .sidebar {
       gap: 1.2rem;
       top: 0;
       box-sizing: border-box;
-      padding: $topSpacing 2rem 2rem 2rem;
+      padding: $topSpacing $layoutPadding * 2 $layoutPadding * 2 $layoutPadding * 2;
       display: flex;
       height: 100vh;
       position: sticky;
+      // Core sidebar transitions (width, padding, margin)
+      transition: width 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+      // Prevent internal content from expanding page height during animation
+      overflow: hidden;
+      min-width: 0;
+
+      // Staggered Animation Base: Hide all scrollbars to prevent flickering
+      scrollbar-width: none;
+      &::-webkit-scrollbar { display: none; }
+      & * { 
+        scrollbar-width: none; 
+        &::-webkit-scrollbar { display: none; }
+      }
+
+      & li,
+      & h2,
+      & h3,
+      & .graph,
+      & .search,
+      & .darkmode,
+      & .toc-header,
+      & .backlinks-header,
+      & .explorer-header {
+        transition: opacity 0.2s ease;
+        // Animation direction: DOWN (Top-to-Bottom) for opening
+        transition-delay: calc(var(--stagger-index, 0) * 0.01s);
+      }
     }
 
     & .sidebar.left {
       z-index: 1;
-      grid-area: grid-sidebar-left;
+      grid-column: 1;
+      grid-row: 1 / 4;
+      justify-self: end;
+      width: $sidePanelWidth;
       flex-direction: column;
-      @media all and ($mobile) {
-        gap: 0;
-        align-items: center;
-        position: initial;
-        display: flex;
-        height: unset;
-        flex-direction: row;
-        padding: 0;
-        padding-top: 2rem;
+
+      @media all and not ($desktop) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: 100dvh;
+        background-color: var(--light);
+        z-index: 2500;
+        display: none;
+        flex-direction: column;
+        padding: $topSpacing + 2rem $layoutPadding $layoutPadding $layoutPadding;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
       }
     }
 
     & .sidebar.right {
-      grid-area: grid-sidebar-right;
-      margin-right: 0;
+      grid-column: 3;
+      grid-row: 1 / 4;
+      justify-self: start;
+      width: $sidePanelWidth;
       flex-direction: column;
-      @media all and ($mobile) {
-        margin-left: inherit;
-        margin-right: inherit;
-      }
+
       @media all and not ($desktop) {
-        position: initial;
-        height: unset;
-        width: 100%;
-        flex-direction: row;
-        padding: 0;
-        & > * {
-          flex: 1;
-          max-height: 24rem;
-        }
-        & > .toc {
-          display: none;
-        }
+        display: none;
       }
     }
+
     & .page-header,
     & .page-footer {
       margin-top: 1rem;
     }
 
     & .page-header {
-      grid-area: grid-header;
+      grid-column: 2;
+      grid-row: 1;
       margin: $topSpacing 0 0 0;
-      @media all and ($mobile) {
+      width: 800px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+
+      @media all and not ($desktop) {
+        width: 100%;
         margin-top: 0;
         padding: 0;
+        display: block;
+
+        & > header {
+          position: sticky;
+          top: 0;
+          background-color: var(--light);
+          z-index: 3000;
+          padding: 0.5rem $layoutPadding;
+          border-bottom: 1px solid var(--lightgray);
+          display: flex;
+          align-items: center;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+
+          & .page-title {
+            margin: 0;
+            font-size: 1.2rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          & .flex-component {
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
+          }
+        }
+
+        & .popover-hint {
+          padding: 0 $layoutPadding;
+        }
       }
     }
 
     & .center > article {
-      grid-area: grid-center;
-    }
-
-    & footer {
-      grid-area: grid-footer;
-    }
-
-    & .center,
-    & footer {
-      max-width: 100%;
-      min-width: 100%;
+      grid-column: 2;
+      grid-row: 2;
+      width: 800px;
+      max-width: 800px;
       margin-left: auto;
       margin-right: auto;
-      @media all and ($tablet) {
-        margin-right: 0;
-      }
-      @media all and ($mobile) {
-        margin-right: 0;
-        margin-left: 0;
+
+      @media all and not ($desktop) {
+        width: 100%;
+        padding: 0 $layoutPadding;
+        box-sizing: border-box;
       }
     }
+
     & footer {
-      margin-left: 0;
+      grid-column: 2;
+      grid-row: 3;
+      width: 800px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+
+      @media all and not ($desktop) {
+        width: 100%;
+        padding: $layoutPadding;
+        box-sizing: border-box;
+      }
     }
-  }
-}
 
-// ============================================================================
-// Page Frame Overrides
-// ============================================================================
+    & .center {
+      display: flex;
+      flex-direction: column;
 
-// Full-width frame: no sidebars, center content spans full width
-.page[data-frame="full-width"] > #quartz-body {
-  grid-template-columns: auto;
-  grid-template-rows: auto auto auto;
-  grid-template-areas:
-    "grid-header"
-    "grid-center"
-    "grid-footer";
+      @media all and not ($desktop) {
+        display: block;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0;
+        box-sizing: border-box;
+      }
+    }
 
-  @media all and ($tablet) {
-    grid-template-columns: auto;
-  }
+    body:not(.left-pane-collapsed) & .sidebar.left {
+      @media all and not ($desktop) {
+        display: flex;
+      }
+    }
 
-  & .center.full-width {
-    max-width: 100%;
-    min-width: 100%;
-  }
-}
+    body.left-pane-collapsed & {
+      @media all and ($desktop) {
+        & .sidebar.left,
+        & .sidebar.right {
+          width: 0;
+          padding: 0;
+          margin: 0;
+          pointer-events: none;
+          visibility: hidden;
+          
+          /**
+           * Wait for staggered item fades to finish (0.5s delay) 
+           * before collapsing the sidebar width (0.3s duration).
+           */
+          transition: 
+            width 0.3s ease 0.5s, 
+            padding 0.3s ease 0.5s, 
+            margin 0.3s ease 0.5s, 
+            visibility 0s linear 0.8s;
 
-// Minimal frame: no sidebars, no header/footer chrome, body content only + footer
-.page[data-frame="minimal"] > #quartz-body {
-  grid-template-columns: auto;
-  grid-template-rows: auto auto;
-  grid-template-areas:
-    "grid-center"
-    "grid-footer";
-
-  @media all and ($tablet) {
-    grid-template-columns: auto;
-  }
-
-  & .center.minimal {
-    max-width: 100%;
-    min-width: 100%;
-    margin: 0;
+          & li,
+          & h2,
+          & h3,
+          & .graph,
+          & .search,
+          & .darkmode,
+          & .toc-header,
+          & .backlinks-header,
+          & .explorer-header {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            // Animation direction: UP (Bottom-to-Top) for closing
+            transition-delay: calc(var(--stagger-index-rev, 0) * 0.01s);
+          }
+        }
+      }
+    }
   }
 }
 
@@ -445,7 +535,7 @@ h1 {
 }
 
 h2 {
-  font-size: 1.4rem;
+  font-size: 1.55rem;
   margin-top: 1.9rem;
   margin-bottom: 1rem;
 }
@@ -680,4 +770,23 @@ iframe.pdf {
   background: var(--secondary);
   transition: width 0.2s ease;
   z-index: 9999;
+}
+
+// Darkmode View Transition
+::view-transition-old(root) {
+  animation: 300ms ease-out both fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 300ms ease-in both fade-in;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }

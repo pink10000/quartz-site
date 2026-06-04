@@ -1,3 +1,174 @@
 @use "./variables.scss" as *;
 
 // put your custom CSS here!
+/* Aggressively hide note-properties and other metadata tables to match v4 */
+.note-properties,
+.metadata-container,
+.property-table {
+  display: none !important;
+}
+
+.content-meta {
+  margin-top: 0;
+  font-size: 0.9rem;
+  color: var(--gray);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  & > time::after {
+    content: ",";
+  }
+}
+
+.tags {
+  list-style: none;
+  display: flex;
+  padding-left: 0;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  flex-wrap: wrap;
+
+  & > li {
+    display: inline-block;
+    white-space: nowrap;
+    margin: 0;
+  }
+}
+
+a.internal.tag-link {
+  border-radius: 8px;
+  background-color: var(--highlight);
+  padding: 0.2rem 0.4rem;
+  margin: 0 0.1rem;
+  color: var(--secondary) !important;
+  font-weight: $semiBoldWeight;
+  font-size: 0.85rem;
+
+  &::before {
+    content: "#";
+  }
+
+  &:hover {
+    background-color: var(--lightgray);
+  }
+}
+
+/* Ensure article title and breadcrumbs are visible and styled like v4 */
+.article-title {
+  display: block !important;
+  visibility: visible !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.25rem !important;
+  font-size: 2.25rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  color: var(--dark);
+}
+
+.breadcrumb-container {
+  display: flex !important;
+  visibility: visible !important;
+  margin-bottom: 0.25rem !important;
+  font-size: 0.85rem !important;
+  color: var(--secondary) !important;
+  font-weight: $semiBoldWeight;
+}
+
+/* Horizontally center the graph in the page content */
+.desmos-graph {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+}
+
+/* Invert Desmos graphs in dark mode */
+:root[saved-theme="dark"] .desmos-graph {
+    filter: invert(0.9) hue-rotate(180deg);
+}
+
+/* Pane Toggle Styles */
+#pane-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--darkgray);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--secondary);
+  }
+
+  & svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Prevent scrollbar jumps */
+html {
+  scrollbar-gutter: stable;
+}
+
+.page-title {
+  flex: 0 0 auto;
+  margin-right: 2rem;
+
+  & > a {
+    color: var(--secondary);
+  }
+}
+
+/* Center code blocks */
+pre {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+pre > code:not(.mermaid) {
+  width: fit-content;
+  text-align: left; /* Keep the ASCII lines aligned with each other */
+}
+
+pre > code.mermaid {
+  width: 100%;
+  display: block;
+}
+
+figure[data-rehype-pretty-code-figure] {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Horizontally center Mermaid diagrams */
+div.mermaid {
+  display: flex;
+  justify-content: center;
+}
+
+/* ── v4 Search Bar Sizing ── */
+.search {
+  min-width: fit-content;
+  max-width: 100%;
+  width: 100%;
+
+  @media all and ($desktop) {
+    width: 20rem;
+  }
+
+  @media all and ($mobile) {
+    min-width: 0;
+  }
+}

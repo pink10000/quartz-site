@@ -345,7 +345,7 @@ export const DesmosGraph: QuartzTransformerPlugin = () => {
             return [
                 () => async (tree, file) => {
                     if (process.env.SKIP_DESMOS) {
-                        console.log("\nSkipping Desmos SVG generation (SKIP_DESMOS is set)")
+                        // console.log("\nSkipping Desmos SVG generation (SKIP_DESMOS is set)")
                         return
                     }
 

@@ -3,6 +3,7 @@ import { Repository } from "@napi-rs/simple-git"
 import { QuartzTransformerPlugin } from "../types"
 import path from "path"
 import { styleText } from "util"
+import { spawnSync } from "child_process"
 
 export interface Options {
   priority: ("frontmatter" | "git" | "filesystem")[]
@@ -46,6 +47,8 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
       return [
         () => {
           const repoCache = new Map<string, Repository>()
+          const creationDateCache = new Map<string, Map<string, number>>()
+          const loadedWorkdirs = new Set<string>()
 
           return async (_tree, file) => {
             let created: MaybeDate = undefined
@@ -79,6 +82,41 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
                   try {
                     const workdir = currentRepo.workdir() ?? ctx.argv.directory
                     const relativePath = path.relative(workdir, fullFp)
+
+                    if (!loadedWorkdirs.has(workdir)) {
+                      const repoCreationCache = new Map<string, number>()
+                      try {
+                        const result = spawnSync(
+                          "git",
+                          ["log", "--diff-filter=A", "--name-only", "--format=COMMIT:%at", "-z"],
+                          { encoding: "utf-8", cwd: workdir },
+                        )
+                        if (result.status === 0) {
+                          const pieces = result.stdout.split("\0")
+                          let currentTimestamp: number | undefined
+                          for (const piece of pieces) {
+                            if (piece.startsWith("COMMIT:")) {
+                              currentTimestamp = parseInt(piece.slice(7))
+                            } else {
+                              const file = piece.trim()
+                              if (file && currentTimestamp) {
+                                const timestampMs = currentTimestamp * 1000
+                                const existing = repoCreationCache.get(file)
+                                if (!existing || timestampMs < existing) {
+                                  repoCreationCache.set(file, timestampMs)
+                                }
+                              }
+                            }
+                          }
+                        }
+                      } catch {
+                        // ignore
+                      }
+                      creationDateCache.set(workdir, repoCreationCache)
+                      loadedWorkdirs.add(workdir)
+                    }
+
+                    created ||= creationDateCache.get(workdir)?.get(relativePath)
                     modified ||= await currentRepo.getFileLatestModifiedDateAsync(relativePath)
                   } catch {
                     console.log(

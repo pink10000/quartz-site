@@ -19,7 +19,7 @@ const config: QuartzConfig = {
     locale: "en-US",
     baseUrl: "pink10000.github.io/notes",
     ignorePatterns: ["private", "templates", ".obsidian"],
-    defaultDateType: "modified",
+    defaultDateType: "created",
     theme: {
       fontOrigin: "googleFonts",
       cdnCaching: true,
@@ -58,7 +58,7 @@ const config: QuartzConfig = {
     transformers: [
       Plugin.FrontMatter(),
       Plugin.CreatedModifiedDate({
-        priority: ["frontmatter", "git", "filesystem"],
+        priority: ["git", "frontmatter", "filesystem"],
       }),
       Plugin.DesmosGraph(),
       Plugin.TikzJax({ showConsole: false }),
@@ -219,7 +219,7 @@ const config: QuartzConfig = {
       Plugin.FolderPage({
         sort: (a, b) => {
             if (a.dates && b.dates) {
-              return b.dates.modified.getTime() - a.dates.modified.getTime()
+              return b.dates.created.getTime() - a.dates.created.getTime()
             }
 
             const orderA = a.frontmatter?.tags?.find((tag: string) => tag.startsWith("order:"))?.split(":")[1] as number | undefined ?? Infinity;

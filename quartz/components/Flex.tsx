@@ -15,6 +15,7 @@ type FlexConfig = {
   direction?: "row" | "row-reverse" | "column" | "column-reverse"
   wrap?: "nowrap" | "wrap" | "wrap-reverse"
   gap?: string
+  grow?: boolean
 }
 
 export default ((config: FlexConfig) => {
@@ -22,11 +23,12 @@ export default ((config: FlexConfig) => {
     const direction = config.direction ?? "row"
     const wrap = config.wrap ?? "nowrap"
     const gap = config.gap ?? "1rem"
+    const growContainer = config.grow ? 1 : 0
 
     return (
       <div
         class={classNames(props.displayClass, "flex-component")}
-        style={`flex-direction: ${direction}; flex-wrap: ${wrap}; gap: ${gap};`}
+        style={`display: flex; flex-direction: ${direction}; flex-wrap: ${wrap}; gap: ${gap}; flex: ${growContainer}; min-width: 0;`}
       >
         {config.components.map((c) => {
           const grow = c.grow ? 1 : 0
@@ -38,7 +40,7 @@ export default ((config: FlexConfig) => {
 
           return (
             <div
-              style={`flex-grow: ${grow}; flex-shrink: ${shrink}; flex-basis: ${basis}; order: ${order}; align-self: ${align}; justify-self: ${justify};`}
+              style={`display: flex; flex-grow: ${grow}; flex-shrink: ${shrink}; flex-basis: ${basis}; order: ${order}; align-items: ${align}; justify-content: ${justify}; width: ${grow ? "100%" : "auto"}; min-width: 0;`}
             >
               <c.Component {...props} />
             </div>

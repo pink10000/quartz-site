@@ -10,6 +10,8 @@ import { StaticResources } from "../../util/resources"
 import { render } from "preact-render-to-string"
 import { fromHtml } from "hast-util-from-html"
 import { Root as HtmlRoot } from "hast"
+import HeaderConstructor from "../../components/Header"
+import BodyConstructor from "../../components/Body"
 
 function getPageTypes(ctx: BuildCtx): QuartzPageTypePluginInstance[] {
   return (ctx.cfg.plugins.pageTypes ?? []) as unknown as QuartzPageTypePluginInstance[]
@@ -42,6 +44,13 @@ function collectComponents(
   byPageType: Record<string, Partial<FullPageLayout>>,
 ): QuartzComponent[] {
   const seen = new Set<QuartzComponent>()
+  
+  // Add hardcoded frame components so their styles/scripts are collected
+  const Header = HeaderConstructor()
+  const Body = BodyConstructor()
+  seen.add(Header)
+  seen.add(Body)
+
   for (const pt of pageTypes) {
     const layout = resolveLayout(pt, sharedDefaults, byPageType)
     const all = [

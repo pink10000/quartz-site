@@ -337,11 +337,12 @@ export const ComponentResources: QuartzEmitterPlugin = () => {
         (c) => !componentResources.componentCssStrings.has(c),
       )
 
-      // Core CSS: theme + fonts + global CSS + base styles (no per-component CSS)
+      // Core CSS: theme + fonts + global CSS + component CSS + base styles
       const quartzBase = joinStyles(
         ctx.cfg.configuration.theme,
         googleFontsStyleSheet,
         ...globalCss,
+        ...componentResources.componentCssStrings,
         baseStyles,
       )
       const stylesheet = `@layer quartz-base {\n${quartzBase}\n}\n${customStyles}`
@@ -405,31 +406,6 @@ export const ComponentResources: QuartzEmitterPlugin = () => {
       }).code.toString()
 
       const cssStringToFilename = new Map<string, string>()
-      for (const cssString of componentResources.componentCssStrings) {
-        if (cssStringToFilename.has(cssString)) continue
-
-        const wrapped = `@layer quartz-base {\n${cssString}\n}`
-        const minified = transform({
-          filename: "component.css",
-          code: Buffer.from(wrapped),
-          minify: true,
-          targets: lightningTargets,
-          include: Features.MediaQueries,
-        }).code.toString()
-
-        const hash = hashContent(minified)
-        const slug = `component-${hash}`
-        const filename = `${slug}.css`
-        cssStringToFilename.set(cssString, filename)
-
-        yield write({
-          ctx,
-          slug: slug as FullSlug,
-          ext: ".css",
-          content: minified,
-        })
-      }
-
       ctx.componentCssMap = cssStringToFilename
 
       // Extract inline CSS/JS from plugin externalResources() into external files.

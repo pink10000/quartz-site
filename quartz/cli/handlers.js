@@ -328,6 +328,17 @@ export async function handleBuild(argv) {
 
   if (argv.serve) {
     argv.watch = true
+    if (!argv.baseDir) {
+      const config = readPluginsJson()
+      const baseUrl = config?.configuration?.baseUrl
+      if (baseUrl) {
+        const url = new URL(baseUrl.startsWith("http") ? baseUrl : `https://${baseUrl}`)
+        const path = url.pathname.replace(/\/$/, "")
+        if (path && path !== "/") {
+          argv.baseDir = path
+        }
+      }
+    }
   }
 
   console.log(`\n${styleText(["bgGreen", "black"], ` Quartz v${version} `)} \n`)
